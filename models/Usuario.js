@@ -1,0 +1,42 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const { MUNICIPIOS } = require('../utils/constantes');
+
+const usuarioSchema = new mongoose.Schema(
+  {
+    nombre: { type: String, required: true, trim: true },
+    apellido: { type: String, required: true, trim: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true
+    },
+    password: { type: String, required: true, minlength: 6, select: false },
+    municipio: { type: String, enum: MUNICIOS_VALIDOS(), required: true },
+    rol: { type: String, enum: ['usuario', 'administrador'], default: 'usuario' },
+    activo: { type: Boolean, default: true }
+  },
+  { timestamps: true }
+);
+
+// Los municipios válidos para el usuario no incluyen "Todo Bolívar" (eso aplica solo a oportunidades)
+function MUNICIOS_VALIDOS() {
+  return MUNICIPIOS.filter((m) => m !== 'Todo Bolívar');
+}
+
+// Hashear la contraseña antes de guardar
+usuarioSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// Método para comparar contraseñas en el login
+usuarioSchema.methods.compararPassword = async function (passwordIngresada) {
+  return bcrypt.compare(passwordIngresada, this.password);
+};
+
+module.exports = mongoose.model('Usuario', usuarioSchema);
