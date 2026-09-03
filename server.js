@@ -39,7 +39,6 @@ app.use(manejadorDeErrores);
 
 const PORT = process.env.PORT || 4000;
 
-console.log('🔍 URI que se está usando:', process.env.MONGO_URI);
 
 conectarDB().then(() => {
   app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
