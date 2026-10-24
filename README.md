@@ -13,6 +13,60 @@ API REST para la app que centraliza oportunidades de educación, trabajo y empre
 - express-validator para validaciones
 - helmet, cors y express-rate-limit para seguridad básica
 
+## Publicar el backend en internet (para que el APK funcione en cualquier red)
+
+Si entregás el APK, el profesor lo instala en su celular: **para que le
+funcione, el backend tiene que estar en internet**, no en tu PC. La base de
+datos ya está en internet (MongoDB Atlas), solo falta publicar el servidor.
+
+### Con Render (gratis, ~5 minutos)
+
+El repositorio ya está en GitHub (`https://github.com/Dani062/Bolivar`) y el
+proyecto tiene el archivo `render.yaml` que configura todo solo.
+
+1. Entra a **https://render.com** y crea una cuenta (con GitHub es un clic).
+2. **New → Blueprint** y apunta al repositorio `Dani062/Bolivar`.
+3. Render lee `render.yaml` y crea el servicio. Te va a pedir el valor de
+   `MONGO_URI`: pega el de tu archivo `.env` (es la URL de tu cluster de
+   Atlas). Lo demás lo genera Render solo.
+4. Cuando termine de desplegar te da una dirección tipo
+   `https://bolivar-aprende-y-trabaja-api.onrender.com`.
+
+Comprobación: abre `https://bolivar-aprende-y-trabaja-api.onrender.com/api/salud`
+en el navegador. Debe salir `{"estado":"ok"}`.
+
+### Compilar la app apuntando a esa dirección
+
+```powershell
+flutter build apk --release --dart-define=API_URL=https://bolivar-aprende-y-trabaja-api.onrender.com/api
+```
+
+> **Ojo con el plan gratis de Render:** el servicio se duerme si nadie lo usa
+> durante 15 minutos, y al despertarse tarda medio minuto. Por eso la app
+> espera hasta 45 segundos en el primer intento (el login). Si vas a hacer la
+> demostración en vivo, entra un momento antes a la dirección de la API para
+> despertarlo.
+>
+> Si prefieres que nunca se duerma, en Render puedes subir el plan a
+> "Starter" (7 USD/mes), o usar otro servicio como Railway, Fly.io o Koyeb.
+
+### Si el despliegue pide "MongoDB Atlas"
+
+El `MONGO_URI` que hay que pegar es el que está en tu archivo `.env`:
+
+```
+MONGO_URI=mongodb+srv://Daniela:TU_CLAVE@cluster0.07z6lee.mongodb.net/bolivar_aprende_y_trabaja?appName=Cluster0
+```
+
+Copia **la línea completa**, con `mongodb+srv://` al principio.
+
+### Igual la app deja cambiar la dirección
+
+Por si acaso, en la **pantalla de login** hay un botón abajo
+("Servidor: ..."). Ahí se puede escribir la dirección del backend y la app la
+usa desde ese momento. Sirve para apuntar a un servidor local durante las
+pruebas, sin tener que recompilar.
+
 ## Instalación
 
 1. Instalar dependencias:
