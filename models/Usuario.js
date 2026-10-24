@@ -15,6 +15,14 @@ const usuarioSchema = new mongoose.Schema(
     },
     password: { type: String, required: true, minlength: 6, select: false },
     municipio: { type: String, enum: MUNICIOS_VALIDOS(), required: true },
+    // Datos que pide el formulario de registro de la app
+    identificacion: { type: String, trim: true },
+    telefono: { type: String, trim: true },
+    tipoPerfil: {
+      type: String,
+      enum: ['Estudiante', 'Profesional', 'Emprendedor'],
+      default: 'Estudiante'
+    },
     rol: { type: String, enum: ['usuario', 'administrador'], default: 'usuario' },
     activo: { type: Boolean, default: true }
   },

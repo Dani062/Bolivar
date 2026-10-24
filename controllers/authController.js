@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
+const Notificacion = require('../models/Notificacion');
 
 const generarToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -7,29 +8,55 @@ const generarToken = (id) => {
   });
 };
 
+// Arma el objeto de usuario que devuelve la API. Es el mismo que espera la
+// app, así que no hay que transformar nada del lado del celular.
+const datosUsuario = (usuario) => ({
+  id: usuario._id,
+  nombre: usuario.nombre,
+  apellido: usuario.apellido,
+  email: usuario.email,
+  identificacion: usuario.identificacion || '',
+  telefono: usuario.telefono || '',
+  municipio: usuario.municipio,
+  tipoPerfil: usuario.tipoPerfil || 'Estudiante',
+  rol: usuario.rol,
+  esAdministrador: usuario.rol === 'administrador'
+});
+
 // POST /api/auth/registro
 const registrar = async (req, res, next) => {
   try {
-    const { nombre, apellido, email, password, municipio } = req.body;
+    const { nombre, apellido, email, password, municipio, identificacion, telefono, tipoPerfil } = req.body;
 
     const existe = await Usuario.findOne({ email });
     if (existe) {
       return res.status(400).json({ mensaje: 'Ya existe una cuenta con ese correo.' });
     }
 
-    const usuario = await Usuario.create({ nombre, apellido, email, password, municipio });
+    const usuario = await Usuario.create({
+      nombre,
+      apellido,
+      email,
+      password,
+      municipio,
+      identificacion,
+      telefono,
+      tipoPerfil
+    });
+
+    // Aviso de bienvenida, igual que antes se guardaba en el celular.
+    await Notificacion.create({
+      usuario: usuario._id,
+      titulo: 'Bienvenido a Bolívar Aprende y Trabaja',
+      icono: 'bienvenida',
+      mensaje:
+        'Tu cuenta fue creada correctamente. Ya puedes explorar oportunidades académicas y laborales.'
+    });
 
     res.status(201).json({
       mensaje: 'Cuenta creada correctamente.',
       token: generarToken(usuario._id),
-      usuario: {
-        id: usuario._id,
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        municipio: usuario.municipio,
-        rol: usuario.rol
-      }
+      usuario: datosUsuario(usuario)
     });
   } catch (error) {
     next(error);
@@ -58,14 +85,7 @@ const iniciarSesion = async (req, res, next) => {
     res.json({
       mensaje: 'Sesión iniciada correctamente.',
       token: generarToken(usuario._id),
-      usuario: {
-        id: usuario._id,
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        municipio: usuario.municipio,
-        rol: usuario.rol
-      }
+      usuario: datosUsuario(usuario)
     });
   } catch (error) {
     next(error);
@@ -74,13 +94,13 @@ const iniciarSesion = async (req, res, next) => {
 
 // GET /api/auth/perfil (protegido)
 const obtenerPerfil = async (req, res) => {
-  res.json({ usuario: req.usuario });
+  res.json({ usuario: datosUsuario(req.usuario) });
 };
 
 // PUT /api/auth/perfil (protegido)
 const actualizarPerfil = async (req, res, next) => {
   try {
-    const camposPermitidos = ['nombre', 'apellido', 'municipio'];
+    const camposPermitidos = ['nombre', 'apellido', 'municipio', 'tipoPerfil', 'telefono'];
     camposPermitidos.forEach((campo) => {
       if (req.body[campo] !== undefined) {
         req.usuario[campo] = req.body[campo];
@@ -88,10 +108,36 @@ const actualizarPerfil = async (req, res, next) => {
     });
 
     await req.usuario.save();
-    res.json({ mensaje: 'Perfil actualizado.', usuario: req.usuario });
+    res.json({ mensaje: 'Perfil actualizado.', usuario: datosUsuario(req.usuario) });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { registrar, iniciarSesion, obtenerPerfil, actualizarPerfil };
+// GET /api/auth/usuarios (solo administrador)
+// Lista de usuarios: la usa el panel del administrador para saber cuántos
+// hay y para enviarle una alerta a uno en particular.
+const listarUsuarios = async (req, res, next) => {
+  try {
+    const usuarios = await Usuario.find({}).sort({ createdAt: -1 });
+    res.json({
+      total: usuarios.length,
+      usuarios: usuarios.map((u) => ({
+        ...datosUsuario(u),
+        activo: u.activo,
+        creadoEn: u.createdAt
+      }))
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  registrar,
+  iniciarSesion,
+  obtenerPerfil,
+  actualizarPerfil,
+  listarUsuarios,
+  datosUsuario
+};

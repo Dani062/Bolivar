@@ -30,9 +30,11 @@ const reglasLogin = [
 const reglasOportunidad = [
   body('titulo').trim().notEmpty().withMessage('El título es obligatorio.'),
   body('descripcion').trim().notEmpty().withMessage('La descripción es obligatoria.'),
-  body('categoria').isIn(CATEGORIAS).withMessage('Categoría no válida.'),
-  body('tipo').isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válido.'),
-  body('municipio').isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
+  body('clase').optional().isIn(['academica', 'laboral']).withMessage('Clase no válida.'),
+  body('categoria').optional().isIn(CATEGORIAS).withMessage('Categoría no válida.'),
+  body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válido.'),
+  body('municipio').optional().isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
+  body('cupos').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Cupos debe ser un número.'),
   validar
 ];
 

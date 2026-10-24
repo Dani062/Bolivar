@@ -1,0 +1,9 @@
+# Use this workspace to collaborate
+workspace:
+  id: f3d342fc-280e-4f54-88c7-1ca2f0a03c7f
+
+localResources:
+  collections:
+    - ../Bolivar-Aprende-y-Trabaja.postman_collection.json
+  environments:
+    - ../Bolivar-Entorno-Local.postman_environment.json

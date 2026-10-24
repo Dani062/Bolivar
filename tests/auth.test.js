@@ -9,6 +9,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../server');
+const conectarDB = require('../config/db');
 const Usuario = require('../models/Usuario');
 
 const usuarioPrueba = {
@@ -20,6 +21,7 @@ const usuarioPrueba = {
 };
 
 beforeAll(async () => {
+  await conectarDB();
   await Usuario.deleteMany({ email: usuarioPrueba.email });
 });
 

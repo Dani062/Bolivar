@@ -1,0 +1,1456 @@
+{
+  "info": {
+    "name": "Bolivar Aprende y Trabaja - API (Node.js + Express + MongoDB)",
+    "description": "Coleccion de pruebas del CRUD de la API del backend. Cubre GET, POST, PUT y DELETE de oportunidades, autenticacion con JWT, permisos por rol, favoritos y validaciones.\n\nRutas de oportunidades:\n  GET    /oportunidades        listado publico (solo activas)\n  GET    /oportunidades/todas  listado completo (solo administrador, requiere token)\n  GET    /oportunidades/:id    leer una oportunidad\n  POST   /oportunidades        crear (solo administrador)\n  PUT    /oportunidades/:id    actualizar (solo administrador)\n  DELETE /oportunidades/:id    eliminar (solo administrador)\n\n\nRutas de la sesion del usuario (todo se guarda en MongoDB):\n  POST   /auth/registro      crea la cuenta (devuelve token)\n  POST   /auth/login         inicia sesion (devuelve token)\n  GET    /auth/perfil        datos del usuario con sesion\n  PUT    /auth/perfil        actualiza nombre, apellido, municipio, tipoPerfil, telefono\n  GET    /auth/usuarios      listado de usuarios (solo administrador)\n  POST   /postulaciones      el estudiante se postula a una oferta laboral\n  GET    /postulaciones/mias postulaciones del usuario con sesion\n  GET    /postulaciones      todas las postulaciones (solo administrador)\n  PUT    /postulaciones/:id/estado  cambia el estado (solo administrador)\n  POST   /inscripciones      el estudiante se inscribe a un curso\n  GET    /inscripciones/mias inscripciones del usuario con sesion\n  DELETE /inscripciones/oportunidad/:id  anula la inscripcion\n  GET    /notificaciones      notificaciones del usuario con sesion\n  PUT    /notificaciones/leer-todas  marca todas como leidas\n  POST   /notificaciones      el administrador manda una alerta\nComo usarla:\n1. Encender el servidor: npm start (en la carpeta backend). Crear el admin una vez: npm run seed.\n2. En Postman: Import > seleccionar este archivo.\n3. Verificar la variable baseUrl (por defecto http://localhost:4000/api).\n4. Click derecho sobre la coleccion > Run collection > Run.\n\nLas pruebas crean una oportunidad, la editan, la borran y limpian los favoritos que agregan, asi que se pueden correr varias veces sin dejar basura.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000/api"
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "tokenUsuario",
+      "value": ""
+    },
+    {
+      "key": "idOportunidad",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Estado del servidor",
+      "item": [
+        {
+          "name": "1.1 GET /salud - la API esta viva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('El estado es ok', () => pm.expect(data.estado).to.eql('ok'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/salud",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "salud"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 GET ruta inexistente - responde 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 404', () => pm.response.to.have.status(404));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Avisa que la ruta no existe', () => pm.expect(data.mensaje).to.include('Ruta no encontrada'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ruta-que-no-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ruta-que-no-existe"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Autenticacion (JWT)",
+      "item": [
+        {
+          "name": "2.1 POST /auth/login - administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Entrega un token JWT', () => {",
+                  "        pm.expect(data.token).to.be.a('string').and.not.empty;",
+                  "        pm.expect(data.token.split('.')).to.have.lengthOf(3);",
+                  "    });",
+                  "    pm.test('El rol es administrador', () => pm.expect(data.usuario.rol).to.eql('administrador'));",
+                  "    pm.test('El correo es el del admin', () => pm.expect(data.usuario.email).to.eql('admin@bolivar.com'));",
+                  "    pm.collectionVariables.set('tokenAdmin', data.token);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@bolivar.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.2 POST /auth/login - contrasena incorrecta (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de credenciales invalidas', () => pm.expect(data.mensaje).to.eql('Credenciales inválidas.'));",
+                  "    pm.test('No entrega token', () => pm.expect(data.token).to.be.undefined);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@bolivar.com\",\n  \"password\": \"clave-equivocada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 POST /auth/registro - correo repetido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Avisa que la cuenta ya existe', () => pm.expect(data.mensaje).to.eql('Ya existe una cuenta con ese correo.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Admin\",\n  \"apellido\": \"Bolivar\",\n  \"email\": \"admin@bolivar.com\",\n  \"password\": \"admin123\",\n  \"municipio\": \"Cartagena de Indias\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "registro"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 GET /auth/perfil - con token (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve el usuario del token', () => pm.expect(data.usuario.email).to.eql('admin@bolivar.com'));",
+                  "    pm.test('No expone la contrasena', () => pm.expect(data.usuario.password).to.be.undefined);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "perfil"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.5 GET /auth/perfil - sin token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Pide el token', () => pm.expect(data.mensaje).to.include('No autorizado'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "perfil"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.6 POST /auth/registro - usuario de prueba (para permisos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    // La primera corrida crea la cuenta (201); las siguientes ya existe (400).",
+                  "    pm.test('Crea la cuenta o ya existia', () => pm.expect([201, 400]).to.include(pm.response.code));",
+                  "    if (pm.response.code === 201) {",
+                  "        pm.test('La cuenta nueva es de rol usuario', () => pm.expect(pm.response.json().usuario.rol).to.eql('usuario'));",
+                  "    }",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario\",\n  \"apellido\": \"Prueba Postman\",\n  \"email\": \"postman.prueba@bolivar.com\",\n  \"password\": \"clave123\",\n  \"municipio\": \"Magangué\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "registro"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.7 POST /auth/login - usuario de prueba",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('El rol es usuario (no administrador)', () => pm.expect(data.usuario.rol).to.eql('usuario'));",
+                  "    pm.collectionVariables.set('tokenUsuario', data.token);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"postman.prueba@bolivar.com\",\n  \"password\": \"clave123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Oportunidades - lectura (GET)",
+      "item": [
+        {
+          "name": "3.1 GET /oportunidades - listar todas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo de oportunidades', () => pm.expect(data.oportunidades).to.be.an('array'));",
+                  "    pm.test('Devuelve el total y la paginacion', () => {",
+                  "        pm.expect(data.total).to.be.a('number');",
+                  "        pm.expect(data.pagina).to.eql(1);",
+                  "        pm.expect(data).to.have.property('totalPaginas');",
+                  "    });",
+                  "    pm.test('Todas las oportunidades estan activas', () => {",
+                  "        data.oportunidades.forEach((o) => pm.expect(o.estado).to.eql('activa'));",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades?limite=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ],
+              "query": [
+                {
+                  "key": "limite",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.2 GET /oportunidades?clase=academica - filtro por clase",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Todas las devueltas son academicas', () => {",
+                  "        data.oportunidades.forEach((o) => pm.expect(o.clase).to.eql('academica'));",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades?clase=academica&limite=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ],
+              "query": [
+                {
+                  "key": "clase",
+                  "value": "academica"
+                },
+                {
+                  "key": "limite",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.3 GET /oportunidades?tipo=Cursos&municipio=Cartagena - filtros combinados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo (puede estar vacio)', () => pm.expect(data.oportunidades).to.be.an('array'));",
+                  "    pm.test('Todas son de tipo Cursos', () => {",
+                  "        data.oportunidades.forEach((o) => pm.expect(o.tipo).to.eql('Cursos'));",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades?tipo=Cursos&municipio=Cartagena&limite=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "Cursos"
+                },
+                {
+                  "key": "municipio",
+                  "value": "Cartagena"
+                },
+                {
+                  "key": "limite",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 GET /oportunidades/todas - listado completo (solo administrador)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo de oportunidades', () => pm.expect(data.oportunidades).to.be.an('array'));",
+                  "    pm.test('Devuelve el total', () => pm.expect(data.total).to.be.a('number'));",
+                  "    pm.test('Incluye oportunidades que no estan activas', () => {",
+                  "        const hayCerrada = data.oportunidades.some((o) => o.estado !== 'activa');",
+                  "        pm.expect(hayCerrada, \"No hay oportunidades cerradas: abre una, ponela en estado \\\"cerrada\\\" y vuelve a correr la prueba\").to.be.true;",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/todas?limite=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "todas"
+              ],
+              "query": [
+                {
+                  "key": "limite",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Oportunidades - crear (POST)",
+      "item": [
+        {
+          "name": "4.1 POST /oportunidades - crear (admin, 201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de creada', () => pm.expect(data.mensaje).to.eql('Oportunidad creada.'));",
+                  "    pm.test('Guarda los datos enviados', () => {",
+                  "        pm.expect(data.oportunidad.titulo).to.eql('Curso de prueba Postman');",
+                  "        pm.expect(data.oportunidad.cupos).to.eql(25);",
+                  "        pm.expect(data.oportunidad.clase).to.eql('academica');",
+                  "        pm.expect(data.oportunidad.municipio).to.eql('Todo Bolívar');",
+                  "    });",
+                  "    pm.test('Queda con estado activa y con id de Mongo', () => {",
+                  "        pm.expect(data.oportunidad.estado).to.eql('activa');",
+                  "        pm.expect(data.oportunidad._id).to.be.a('string').and.not.empty;",
+                  "    });",
+                  "    pm.collectionVariables.set('idOportunidad', data.oportunidad._id);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Curso de prueba Postman\",\n  \"descripcion\": \"Oportunidad creada por la coleccion de Postman para probar el CRUD\",\n  \"clase\": \"academica\",\n  \"categoria\": \"Educación\",\n  \"tipo\": \"Cursos\",\n  \"municipio\": \"Todo Bolívar\",\n  \"entidadOrganizadora\": \"Equipo de pruebas\",\n  \"requisitos\": \"Ninguno\",\n  \"cupos\": 25,\n  \"fechaPublicacion\": \"2026-10-22\",\n  \"estado\": \"activa\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.2 POST /oportunidades - sin titulo (400 validacion)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de datos invalidos', () => pm.expect(data.mensaje).to.eql('Datos inválidos.'));",
+                  "    pm.test('Explica cual campo fallo', () => pm.expect(data.errores).to.be.an('array').and.not.empty);",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Falta el titulo a proposito\",\n  \"clase\": \"academica\",\n  \"categoria\": \"Educación\",\n  \"tipo\": \"Cursos\",\n  \"municipio\": \"Todo Bolívar\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.3 POST /oportunidades - con rol usuario (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 403 Forbidden', () => pm.response.to.have.status(403));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Avisa que no tiene permisos', () => pm.expect(data.mensaje).to.eql('No tienes permisos para esta acción.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Intento de usuario normal\",\n  \"descripcion\": \"No deberia poder crearse\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Oportunidades - leer una (GET /:id)",
+      "item": [
+        {
+          "name": "5.1 GET /oportunidades/:id - la recien creada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Es la oportunidad creada', () => {",
+                  "        pm.expect(data.oportunidad._id).to.eql(pm.collectionVariables.get('idOportunidad'));",
+                  "        pm.expect(data.oportunidad.titulo).to.eql('Curso de prueba Postman');",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.2 GET /oportunidades/:id - id que no existe (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 404 Not Found', () => pm.response.to.have.status(404));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Avisa que no la encontro', () => pm.expect(data.mensaje).to.eql('Oportunidad no encontrada.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "000000000000000000000000"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Oportunidades - actualizar (PUT)",
+      "item": [
+        {
+          "name": "6.1 PUT /oportunidades/:id - editar titulo y cupos (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de actualizada', () => pm.expect(data.mensaje).to.eql('Oportunidad actualizada.'));",
+                  "    pm.test('Los cambios quedaron guardados', () => {",
+                  "        pm.expect(data.oportunidad.titulo).to.eql('Curso editado desde Postman');",
+                  "        pm.expect(data.oportunidad.cupos).to.eql(77);",
+                  "    });",
+                  "    pm.test('El id no cambia', () => pm.expect(data.oportunidad._id).to.eql(pm.collectionVariables.get('idOportunidad')));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Curso editado desde Postman\",\n  \"cupos\": 77\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.2 PUT /oportunidades/:id - con rol usuario (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 403 Forbidden', () => pm.response.to.have.status(403));",
+                  "    pm.test('No permite editar sin ser admin', () => pm.expect(pm.response.json().mensaje).to.eql('No tienes permisos para esta acción.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Cambio no permitido\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Favoritos",
+      "item": [
+        {
+          "name": "7.1 POST /favoritos/:id - agregar (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de agregado', () => pm.expect(data.mensaje).to.eql('Agregado a favoritos.'));",
+                  "    pm.test('Queda guardada la oportunidad', () => pm.expect(data.favorito.oportunidad).to.eql(pm.collectionVariables.get('idOportunidad')));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.2 GET /favoritos - listar los mios (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo de favoritos', () => pm.expect(data.favoritos).to.be.an('array'));",
+                  "    pm.test('Incluye la oportunidad agregada', () => {",
+                  "        const ids = data.favoritos.map((f) => f.oportunidad && f.oportunidad._id);",
+                  "        pm.expect(ids).to.include(pm.collectionVariables.get('idOportunidad'));",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.3 DELETE /favoritos/:id - quitar (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de eliminado', () => pm.expect(data.mensaje).to.eql('Eliminado de favoritos.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Oportunidades - eliminar (DELETE)",
+      "item": [
+        {
+          "name": "8.1 DELETE /oportunidades/:id - con rol usuario (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 403 Forbidden', () => pm.response.to.have.status(403));",
+                  "    pm.test('No permite borrar sin ser admin', () => pm.expect(pm.response.json().mensaje).to.eql('No tienes permisos para esta acción.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.2 DELETE /oportunidades/:id - admin (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de eliminada', () => pm.expect(data.mensaje).to.eql('Oportunidad eliminada.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.3 GET /oportunidades/:id - ya fue borrada (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 404 Not Found', () => pm.response.to.have.status(404));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Confirma que ya no existe', () => pm.expect(data.mensaje).to.eql('Oportunidad no encontrada.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/oportunidades/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "oportunidades",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Postulaciones (estudiante y administrador)",
+      "item": [
+        {
+          "name": "9.1 POST /postulaciones - postularse a una oferta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oportunidadId\": \"{{idOportunidad}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/postulaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postulaciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.2 GET /postulaciones/mias - mis postulaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/postulaciones/mias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postulaciones",
+                "mias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.3 GET /postulaciones - todas (administrador)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/postulaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postulaciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.4 PUT /postulaciones/:id/estado - cambiar estado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"Aceptada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/postulaciones/{{idOportunidad}}/estado",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postulaciones",
+                "{{idOportunidad}}",
+                "estado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.5 DELETE /postulaciones/:id - borrar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/postulaciones/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "postulaciones",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Inscripciones",
+      "item": [
+        {
+          "name": "10.1 POST /inscripciones - inscribirse a un curso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oportunidadId\": \"{{idOportunidad}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10.2 GET /inscripciones/mias - mis inscripciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/mias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "mias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "10.3 DELETE /inscripciones/oportunidad/:id - anular",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/oportunidad/{{idOportunidad}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "oportunidad",
+                "{{idOportunidad}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Notificaciones",
+      "item": [
+        {
+          "name": "11.1 GET /notificaciones - las mias",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11.2 PUT /notificaciones/leer-todas - marcar todas como leidas",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenUsuario}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/leer-todas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "leer-todas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "11.3 GET /notificaciones/recientes - alertas enviadas (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/recientes?limite=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "recientes"
+              ],
+              "query": [
+                {
+                  "key": "limite",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "11.4 POST /notificaciones - enviar alerta a todos (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Alerta de prueba\",\n  \"mensaje\": \"Mensaje para todos los usuarios\",\n  \"icono\": \"notificacion\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Usuarios (administrador)",
+      "item": [
+        {
+          "name": "12.1 GET /auth/usuarios - listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "usuarios"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
