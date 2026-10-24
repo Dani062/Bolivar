@@ -23,9 +23,42 @@ npm start          # modo normal (node server.js)
 
 Probar que está viva: abrir `http://localhost:4000/api/salud` → `{"estado":"ok"}`.
 
-Para que **el celular** llegue al servidor, la PC y el teléfono deben estar en la misma red Wi-Fi y la IP de `api_config.dart` debe ser la de la PC (hoy: `192.168.101.6`).
+Para que **el celular** llegue al servidor, la PC y el teléfono deben estar en la misma red Wi-Fi y la dirección que use la app debe ser la de la PC (hoy: `192.168.101.6`).
 
-> Si cambia la IP de la PC (cambia de red Wi-Fi o el router reparte direcciones distintas), hay que editar `lib/datos/api_config.dart` en la app y volver a compilar. Para ver la IP actual de la PC: `ipconfig` (buscar "Dirección IPv4" en la red Wi-Fi).
+> **La dirección ya no hay que editarla a mano.** En la carpeta `backend`:
+>
+> ```powershell
+> npm run url
+> ```
+>
+> imprime la IP de la PC y el comando exacto de `flutter run` que hay que
+> copiar. Y en la app, la pantalla de login tiene un botón **"Servidor: ..."**
+> donde se puede cambiar la dirección sin recompilar.
+
+### 2.1 Publicarla en internet (para entregar el APK)
+
+El APK no lleva la base de datos: si el profesor lo instala en su casa,
+necesita un backend accesible desde internet. La base ya lo está (MongoDB
+Atlas); solo falta publicar el servidor.
+
+El proyecto incluye `render.yaml`, que configura el servicio solo en
+[Render](https://render.com) (gratis):
+
+1. Crear una cuenta en Render y **New → Blueprint** apuntando al
+   repositorio `https://github.com/Dani062/Bolivar`.
+2. Pegar el valor de `MONGO_URI` (es el del `.env` de esta máquina).
+3. Render da una dirección tipo
+   `https://bolivar-aprende-y-trabaja-api.onrender.com`.
+
+Después se compila la app apuntando a esa dirección:
+
+```powershell
+flutter build apk --release --dart-define=API_URL=https://bolivar-aprende-y-trabaja-api.onrender.com/api
+```
+
+> El plan gratis de Render apaga el servicio si nadie lo usa 15 minutos, y
+> tarda medio minuto en despertarse. Por eso la app espera hasta 45 segundos
+> en el primer intento (el login).
 
 ### Scripts disponibles (`package.json`)
 
