@@ -1,3 +1,7 @@
 node_modules/
 .env
 *.log
+
+# Paquete de entrega (se genera con: npm run empaquetar)
+entrega/
+Bolivar-Aprende-y-Trabaja-ENTREGA.zip
