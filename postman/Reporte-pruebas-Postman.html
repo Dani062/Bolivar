@@ -27,41 +27,35 @@
     <h3>Newman Report</h3>
     <div class="row">
         <div class="col-md-3">Collection</div><div class="col-md-9">Bolivar Aprende y Trabaja - API (Node.js + Express + MongoDB)</div>
-        <div class="col-md-3">Description</div><div class="col-md-9">Coleccion de pruebas del CRUD de la API del backend. Cubre GET, POST, PUT y DELETE de oportunidades, autenticacion con JWT, permisos por rol, favoritos y validaciones.
+        <div class="col-md-3">Description</div><div class="col-md-9">Coleccion de pruebas del CRUD de la API del backend (Node.js + Express + MongoDB).
+Cubre el CRUD completo de oportunidades, la sesion con JWT, los permisos por rol,
+las postulaciones, las inscripciones, las notificaciones y los favoritos.
+Cada peticion trae sus propias pruebas automaticas (pm.test).
 
-Rutas de oportunidades:
-  GET    /oportunidades        listado publico (solo activas)
-  GET    /oportunidades/todas  listado completo (solo administrador, requiere token)
-  GET    /oportunidades/:id    leer una oportunidad
-  POST   /oportunidades        crear (solo administrador)
-  PUT    /oportunidades/:id    actualizar (solo administrador)
-  DELETE /oportunidades/:id    eliminar (solo administrador)
-
-
-Rutas de la sesion del usuario (todo se guarda en MongoDB):
-  POST   /auth/registro      crea la cuenta (devuelve token)
-  POST   /auth/login         inicia sesion (devuelve token)
-  GET    /auth/perfil        datos del usuario con sesion
-  PUT    /auth/perfil        actualiza nombre, apellido, municipio, tipoPerfil, telefono
-  GET    /auth/usuarios      listado de usuarios (solo administrador)
-  POST   /postulaciones      el estudiante se postula a una oferta laboral
-  GET    /postulaciones/mias postulaciones del usuario con sesion
-  GET    /postulaciones      todas las postulaciones (solo administrador)
-  PUT    /postulaciones/:id/estado  cambia el estado (solo administrador)
-  POST   /inscripciones      el estudiante se inscribe a un curso
-  GET    /inscripciones/mias inscripciones del usuario con sesion
-  DELETE /inscripciones/oportunidad/:id  anula la inscripcion
-  GET    /notificaciones      notificaciones del usuario con sesion
-  PUT    /notificaciones/leer-todas  marca todas como leidas
-  POST   /notificaciones      el administrador manda una alerta
 Como usarla:
-1. Encender el servidor: npm start (en la carpeta backend). Crear el admin una vez: npm run seed.
+1. Encender el servidor: npm start (en la carpeta backend).
+   Crear el administrador una vez: npm run seed.
 2. En Postman: Import &gt; seleccionar este archivo.
-3. Verificar la variable baseUrl (por defecto http://localhost:4000/api).
+3. Activar el entorno &quot;Bolivar Aprende y Trabaja - Local&quot; (icono del ojo, arriba a la derecha).
 4. Click derecho sobre la coleccion &gt; Run collection &gt; Run.
 
-Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos que agregan, asi que se pueden correr varias veces sin dejar basura.&nbsp;</div>
-        <div class="col-md-3">Time</div><div class="col-md-9">Mon Oct 26 2026 10:00:27 GMT-0500 (hora estándar de Colombia)</div>
+El orden de los grupos sigue el flujo de uso:
+  1. Estado del servidor
+  2. Autenticacion (JWT)
+  3-7. CRUD de oportunidades (leer, crear, leer una, actualizar, eliminar)
+  8. Postulaciones
+  9. Inscripciones
+  10. Notificaciones
+  11. Usuarios
+  12. Favoritos
+
+Las pruebas crean una oportunidad, la editan, la borran y limpian lo que
+agregan, asi que se pueden correr varias veces sin dejar basura.
+
+Tambien se puede correr desde la terminal, sin abrir Postman:
+  npm run test:postman        (muestra el resumen en la consola)
+  npm run reporte:postman     (ademas genera un reporte HTML)&nbsp;</div>
+        <div class="col-md-3">Time</div><div class="col-md-9">Mon Oct 26 2026 10:33:07 GMT-0500 (hora estándar de Colombia)</div>
         <div class="col-md-3">Exported with</div><div class="col-md-9">Newman v6.2.3</div>
         <div class="col-md-12">&nbsp;</div>
         <div class="col-md-4">&nbsp;</div><div class="col-md-4"><strong>Total</strong></div><div class="col-md-4"><strong>Failed</strong></div>
@@ -73,9 +67,9 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
           <div class="col-md-4">Assertions</div><div class="col-md-4">102</div><div class="col-md-4">0</div>
 
         <div class="col-md-12">&nbsp;</div>
-        <div class="col-md-6">Total run duration</div><div class="col-md-6">17s</div>
-        <div class="col-md-6">Total data received</div><div class="col-md-6">28.49KB (approx)</div>
-        <div class="col-md-6">Average response time</div><div class="col-md-6">347ms</div>
+        <div class="col-md-6">Total run duration</div><div class="col-md-6">19.7s</div>
+        <div class="col-md-6">Total data received</div><div class="col-md-6">24.94KB (approx)</div>
+        <div class="col-md-6">Average response time</div><div class="col-md-6">420ms</div>
 
         <div class="col-md-12">&nbsp;</div>
         <div class="col-md-3"><strong>Total Failures</strong></div><div class="col-md-6"><strong>0</strong></div>
@@ -83,19 +77,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
 
     <br/><h4>Requests</h4>
 
-        <div class="panel-group" id="collapse-folder-8ebdbc6d-5c2f-4cd0-920d-5497935b313f" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-8ebdbc6d-5c2f-4cd0-920d-5497935b313f">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-8ebdbc6d-5c2f-4cd0-920d-5497935b313f" aria-controls="collapseOne"><strong>1. Estado del servidor</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-ea79183e-b50f-4e45-bb22-070944f9ab6c" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-ea79183e-b50f-4e45-bb22-070944f9ab6c">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-ea79183e-b50f-4e45-bb22-070944f9ab6c" aria-controls="collapseOne"><strong>1. Estado del servidor</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-8ebdbc6d-5c2f-4cd0-920d-5497935b313f" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-8ebdbc6d-5c2f-4cd0-920d-5497935b313f">
-                    <div class="panel-group" id="collapse-request-d8c3cb42-ba94-4b85-9c95-fc63f2421a7c" role="tablist" aria-multiselectable="true">
+            <div id="folderData-ea79183e-b50f-4e45-bb22-070944f9ab6c" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-ea79183e-b50f-4e45-bb22-070944f9ab6c">
+                    <div class="panel-group" id="collapse-request-3b8512a9-d26f-4c85-aff2-83913ce89e14" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-d8c3cb42-ba94-4b85-9c95-fc63f2421a7c">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-d8c3cb42-ba94-4b85-9c95-fc63f2421a7c" aria-controls="collapseOne">1.1 GET /salud - la API esta viva</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-3b8512a9-d26f-4c85-aff2-83913ce89e14">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-3b8512a9-d26f-4c85-aff2-83913ce89e14" aria-controls="collapseOne">1.1 GET /salud - la API esta viva</a></h4>
                             </div>
             
-                            <div id="requestData-d8c3cb42-ba94-4b85-9c95-fc63f2421a7c" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-d8c3cb42-ba94-4b85-9c95-fc63f2421a7c">
+                            <div id="requestData-3b8512a9-d26f-4c85-aff2-83913ce89e14" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-3b8512a9-d26f-4c85-aff2-83913ce89e14">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -104,7 +98,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">83ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">43ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">15B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -127,13 +121,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-911bf6a3-9d7a-4d3b-a4fa-3f6a6255eee7" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-a9045a93-79e1-4084-b9db-231661272a1e" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-911bf6a3-9d7a-4d3b-a4fa-3f6a6255eee7">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-911bf6a3-9d7a-4d3b-a4fa-3f6a6255eee7" aria-controls="collapseOne">1.2 GET ruta inexistente - responde 404</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-a9045a93-79e1-4084-b9db-231661272a1e">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-a9045a93-79e1-4084-b9db-231661272a1e" aria-controls="collapseOne">1.2 GET ruta inexistente - responde 404</a></h4>
                             </div>
             
-                            <div id="requestData-911bf6a3-9d7a-4d3b-a4fa-3f6a6255eee7" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-911bf6a3-9d7a-4d3b-a4fa-3f6a6255eee7">
+                            <div id="requestData-a9045a93-79e1-4084-b9db-231661272a1e" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-a9045a93-79e1-4084-b9db-231661272a1e">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -142,7 +136,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">7ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">5ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">57B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -167,19 +161,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-85948f5d-a148-48ea-9fba-3187657bb8cb" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-85948f5d-a148-48ea-9fba-3187657bb8cb">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-85948f5d-a148-48ea-9fba-3187657bb8cb" aria-controls="collapseOne"><strong>2. Autenticacion (JWT)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-09a4b3b5-ab28-4dff-81c9-e921c538c4fe" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-09a4b3b5-ab28-4dff-81c9-e921c538c4fe">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-09a4b3b5-ab28-4dff-81c9-e921c538c4fe" aria-controls="collapseOne"><strong>2. Autenticacion (JWT)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-85948f5d-a148-48ea-9fba-3187657bb8cb" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-85948f5d-a148-48ea-9fba-3187657bb8cb">
-                    <div class="panel-group" id="collapse-request-ca1296cb-f084-47de-b407-f2093830b866" role="tablist" aria-multiselectable="true">
+            <div id="folderData-09a4b3b5-ab28-4dff-81c9-e921c538c4fe" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-09a4b3b5-ab28-4dff-81c9-e921c538c4fe">
+                    <div class="panel-group" id="collapse-request-0265ee40-19aa-40fc-8f30-2e676a163033" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-ca1296cb-f084-47de-b407-f2093830b866">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-ca1296cb-f084-47de-b407-f2093830b866" aria-controls="collapseOne">2.1 POST /auth/login - administrador</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-0265ee40-19aa-40fc-8f30-2e676a163033">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-0265ee40-19aa-40fc-8f30-2e676a163033" aria-controls="collapseOne">2.1 POST /auth/login - administrador</a></h4>
                             </div>
             
-                            <div id="requestData-ca1296cb-f084-47de-b407-f2093830b866" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-ca1296cb-f084-47de-b407-f2093830b866">
+                            <div id="requestData-0265ee40-19aa-40fc-8f30-2e676a163033" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-0265ee40-19aa-40fc-8f30-2e676a163033">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -188,7 +182,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">615ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">292ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">467B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -211,13 +205,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-99c347a4-64cf-45e5-a6f7-a59c3416c52e" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-f8318bd4-49ef-4ed9-8ab9-802fbc774a4d" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-99c347a4-64cf-45e5-a6f7-a59c3416c52e">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-99c347a4-64cf-45e5-a6f7-a59c3416c52e" aria-controls="collapseOne">2.2 POST /auth/login - contrasena incorrecta (401)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-f8318bd4-49ef-4ed9-8ab9-802fbc774a4d">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-f8318bd4-49ef-4ed9-8ab9-802fbc774a4d" aria-controls="collapseOne">2.2 POST /auth/login - contrasena incorrecta (401)</a></h4>
                             </div>
             
-                            <div id="requestData-99c347a4-64cf-45e5-a6f7-a59c3416c52e" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-99c347a4-64cf-45e5-a6f7-a59c3416c52e">
+                            <div id="requestData-f8318bd4-49ef-4ed9-8ab9-802fbc774a4d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-f8318bd4-49ef-4ed9-8ab9-802fbc774a4d">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -226,7 +220,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">234ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">272ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">38B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -249,13 +243,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-84e8deda-a66b-4f55-9603-7ca96358676d" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-8136f3f3-5c77-4b64-89c6-fb4d6ceae0b9" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-84e8deda-a66b-4f55-9603-7ca96358676d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-84e8deda-a66b-4f55-9603-7ca96358676d" aria-controls="collapseOne">2.3 POST /auth/registro - correo repetido (400)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-8136f3f3-5c77-4b64-89c6-fb4d6ceae0b9">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-8136f3f3-5c77-4b64-89c6-fb4d6ceae0b9" aria-controls="collapseOne">2.3 POST /auth/registro - correo repetido (400)</a></h4>
                             </div>
             
-                            <div id="requestData-84e8deda-a66b-4f55-9603-7ca96358676d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-84e8deda-a66b-4f55-9603-7ca96358676d">
+                            <div id="requestData-8136f3f3-5c77-4b64-89c6-fb4d6ceae0b9" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-8136f3f3-5c77-4b64-89c6-fb4d6ceae0b9">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -264,7 +258,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">165ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">160ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">50B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -287,13 +281,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-84f67689-a6ff-430c-be6a-78d5f7f8ae6d" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-059d440e-32e4-4b6c-a333-3ba292ce1ead" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-84f67689-a6ff-430c-be6a-78d5f7f8ae6d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-84f67689-a6ff-430c-be6a-78d5f7f8ae6d" aria-controls="collapseOne">2.4 GET /auth/perfil - con token (200)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-059d440e-32e4-4b6c-a333-3ba292ce1ead">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-059d440e-32e4-4b6c-a333-3ba292ce1ead" aria-controls="collapseOne">2.4 GET /auth/perfil - con token (200)</a></h4>
                             </div>
             
-                            <div id="requestData-84f67689-a6ff-430c-be6a-78d5f7f8ae6d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-84f67689-a6ff-430c-be6a-78d5f7f8ae6d">
+                            <div id="requestData-059d440e-32e4-4b6c-a333-3ba292ce1ead" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-059d440e-32e4-4b6c-a333-3ba292ce1ead">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -302,7 +296,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">160ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">205ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">241B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -325,13 +319,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-2e54c3c0-a168-4772-955b-5df1de99c68b" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-91ff9d99-b497-4949-9e2a-67c4a6a9e77f" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-2e54c3c0-a168-4772-955b-5df1de99c68b">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-2e54c3c0-a168-4772-955b-5df1de99c68b" aria-controls="collapseOne">2.5 GET /auth/perfil - sin token (401)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-91ff9d99-b497-4949-9e2a-67c4a6a9e77f">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-91ff9d99-b497-4949-9e2a-67c4a6a9e77f" aria-controls="collapseOne">2.5 GET /auth/perfil - sin token (401)</a></h4>
                             </div>
             
-                            <div id="requestData-2e54c3c0-a168-4772-955b-5df1de99c68b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-2e54c3c0-a168-4772-955b-5df1de99c68b">
+                            <div id="requestData-91ff9d99-b497-4949-9e2a-67c4a6a9e77f" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-91ff9d99-b497-4949-9e2a-67c4a6a9e77f">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -363,13 +357,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-075610f5-e3ae-4bde-bd3d-5c37b7f662e8" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-daeb3dc3-760a-42c3-95df-d129fa18bf33" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-075610f5-e3ae-4bde-bd3d-5c37b7f662e8">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-075610f5-e3ae-4bde-bd3d-5c37b7f662e8" aria-controls="collapseOne">2.6 POST /auth/registro - usuario de prueba (para permisos)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-daeb3dc3-760a-42c3-95df-d129fa18bf33">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-daeb3dc3-760a-42c3-95df-d129fa18bf33" aria-controls="collapseOne">2.6 POST /auth/registro - usuario de prueba (para permisos)</a></h4>
                             </div>
             
-                            <div id="requestData-075610f5-e3ae-4bde-bd3d-5c37b7f662e8" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-075610f5-e3ae-4bde-bd3d-5c37b7f662e8">
+                            <div id="requestData-daeb3dc3-760a-42c3-95df-d129fa18bf33" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-daeb3dc3-760a-42c3-95df-d129fa18bf33">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -378,7 +372,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">158ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">244ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">50B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -401,13 +395,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-bbd605b3-8670-43b5-b8fc-a6b453357a13" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-84d47456-ed8b-4f7e-b977-c8049edeb991" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-bbd605b3-8670-43b5-b8fc-a6b453357a13">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-bbd605b3-8670-43b5-b8fc-a6b453357a13" aria-controls="collapseOne">2.7 POST /auth/login - usuario de prueba</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-84d47456-ed8b-4f7e-b977-c8049edeb991">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-84d47456-ed8b-4f7e-b977-c8049edeb991" aria-controls="collapseOne">2.7 POST /auth/login - usuario de prueba</a></h4>
                             </div>
             
-                            <div id="requestData-bbd605b3-8670-43b5-b8fc-a6b453357a13" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-bbd605b3-8670-43b5-b8fc-a6b453357a13">
+                            <div id="requestData-84d47456-ed8b-4f7e-b977-c8049edeb991" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-84d47456-ed8b-4f7e-b977-c8049edeb991">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -416,7 +410,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">226ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">322ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">479B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -441,19 +435,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-0fb8e15e-542e-437c-967b-be7edc8bd756" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-0fb8e15e-542e-437c-967b-be7edc8bd756">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-0fb8e15e-542e-437c-967b-be7edc8bd756" aria-controls="collapseOne"><strong>3. Oportunidades - lectura (GET)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-045fedd1-8e74-41df-9783-9e7bbc647162" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-045fedd1-8e74-41df-9783-9e7bbc647162">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-045fedd1-8e74-41df-9783-9e7bbc647162" aria-controls="collapseOne"><strong>3. Oportunidades - lectura (GET)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-0fb8e15e-542e-437c-967b-be7edc8bd756" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-0fb8e15e-542e-437c-967b-be7edc8bd756">
-                    <div class="panel-group" id="collapse-request-23dd2c8f-15b7-4ba8-a119-3abe65e9f52c" role="tablist" aria-multiselectable="true">
+            <div id="folderData-045fedd1-8e74-41df-9783-9e7bbc647162" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-045fedd1-8e74-41df-9783-9e7bbc647162">
+                    <div class="panel-group" id="collapse-request-1a3ae557-d517-4a9f-9b4c-553cd6f2764d" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-23dd2c8f-15b7-4ba8-a119-3abe65e9f52c">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-23dd2c8f-15b7-4ba8-a119-3abe65e9f52c" aria-controls="collapseOne">3.1 GET /oportunidades - listar todas</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-1a3ae557-d517-4a9f-9b4c-553cd6f2764d">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-1a3ae557-d517-4a9f-9b4c-553cd6f2764d" aria-controls="collapseOne">3.1 GET /oportunidades - listar todas</a></h4>
                             </div>
             
-                            <div id="requestData-23dd2c8f-15b7-4ba8-a119-3abe65e9f52c" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-23dd2c8f-15b7-4ba8-a119-3abe65e9f52c">
+                            <div id="requestData-1a3ae557-d517-4a9f-9b4c-553cd6f2764d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-1a3ae557-d517-4a9f-9b4c-553cd6f2764d">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -462,7 +456,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">181ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">188ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">3.52KB</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -485,13 +479,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-83e11ba8-0575-4d6d-b403-a44ab0485518" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-577567a4-3e54-44db-8133-8676e0ca7f80" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-83e11ba8-0575-4d6d-b403-a44ab0485518">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-83e11ba8-0575-4d6d-b403-a44ab0485518" aria-controls="collapseOne">3.2 GET /oportunidades?clase&#x3D;academica - filtro por clase</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-577567a4-3e54-44db-8133-8676e0ca7f80">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-577567a4-3e54-44db-8133-8676e0ca7f80" aria-controls="collapseOne">3.2 GET /oportunidades?clase&#x3D;academica - filtro por clase</a></h4>
                             </div>
             
-                            <div id="requestData-83e11ba8-0575-4d6d-b403-a44ab0485518" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-83e11ba8-0575-4d6d-b403-a44ab0485518">
+                            <div id="requestData-577567a4-3e54-44db-8133-8676e0ca7f80" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-577567a4-3e54-44db-8133-8676e0ca7f80">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -500,7 +494,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">163ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">174ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">1.28KB</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -523,13 +517,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-e57bc932-78ff-455d-8ea3-db870d48d18e" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-539e0c4c-ac13-464e-bb20-0db10447c8e5" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-e57bc932-78ff-455d-8ea3-db870d48d18e">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-e57bc932-78ff-455d-8ea3-db870d48d18e" aria-controls="collapseOne">3.3 GET /oportunidades?tipo&#x3D;Cursos&amp;municipio&#x3D;Cartagena - filtros combinados</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-539e0c4c-ac13-464e-bb20-0db10447c8e5">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-539e0c4c-ac13-464e-bb20-0db10447c8e5" aria-controls="collapseOne">3.3 GET /oportunidades?tipo&#x3D;Cursos&amp;municipio&#x3D;Cartagena - filtros combinados</a></h4>
                             </div>
             
-                            <div id="requestData-e57bc932-78ff-455d-8ea3-db870d48d18e" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-e57bc932-78ff-455d-8ea3-db870d48d18e">
+                            <div id="requestData-539e0c4c-ac13-464e-bb20-0db10447c8e5" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-539e0c4c-ac13-464e-bb20-0db10447c8e5">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -538,7 +532,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">163ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">158ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">821B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -561,13 +555,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-3de6ddc1-026f-4bff-9c50-9b28bb58e599" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-2c6be664-61c4-46ec-b98e-5ec170d21089" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-3de6ddc1-026f-4bff-9c50-9b28bb58e599">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-3de6ddc1-026f-4bff-9c50-9b28bb58e599" aria-controls="collapseOne">3.4 GET /oportunidades/todas - listado completo (solo administrador)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-2c6be664-61c4-46ec-b98e-5ec170d21089">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-2c6be664-61c4-46ec-b98e-5ec170d21089" aria-controls="collapseOne">3.4 GET /oportunidades/todas - listado completo (solo administrador)</a></h4>
                             </div>
             
-                            <div id="requestData-3de6ddc1-026f-4bff-9c50-9b28bb58e599" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-3de6ddc1-026f-4bff-9c50-9b28bb58e599">
+                            <div id="requestData-2c6be664-61c4-46ec-b98e-5ec170d21089" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-2c6be664-61c4-46ec-b98e-5ec170d21089">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -576,7 +570,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">322ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">406ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">3.52KB</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -601,19 +595,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-e0f80c68-d627-45da-a42a-fbfad156770a" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-e0f80c68-d627-45da-a42a-fbfad156770a">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-e0f80c68-d627-45da-a42a-fbfad156770a" aria-controls="collapseOne"><strong>4. Oportunidades - crear (POST)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-029cb843-edef-4580-863d-2b43214c9b73" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-029cb843-edef-4580-863d-2b43214c9b73">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-029cb843-edef-4580-863d-2b43214c9b73" aria-controls="collapseOne"><strong>4. Oportunidades - crear (POST)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-e0f80c68-d627-45da-a42a-fbfad156770a" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-e0f80c68-d627-45da-a42a-fbfad156770a">
-                    <div class="panel-group" id="collapse-request-0ebc1391-233f-42ad-94ae-b4a4f084c979" role="tablist" aria-multiselectable="true">
+            <div id="folderData-029cb843-edef-4580-863d-2b43214c9b73" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-029cb843-edef-4580-863d-2b43214c9b73">
+                    <div class="panel-group" id="collapse-request-20103fd7-962c-410b-960b-84b31eea5b12" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-0ebc1391-233f-42ad-94ae-b4a4f084c979">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-0ebc1391-233f-42ad-94ae-b4a4f084c979" aria-controls="collapseOne">4.1 POST /oportunidades - crear (admin, 201)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-20103fd7-962c-410b-960b-84b31eea5b12">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-20103fd7-962c-410b-960b-84b31eea5b12" aria-controls="collapseOne">4.1 POST /oportunidades - crear (admin, 201)</a></h4>
                             </div>
             
-                            <div id="requestData-0ebc1391-233f-42ad-94ae-b4a4f084c979" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-0ebc1391-233f-42ad-94ae-b4a4f084c979">
+                            <div id="requestData-20103fd7-962c-410b-960b-84b31eea5b12" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-20103fd7-962c-410b-960b-84b31eea5b12">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -622,7 +616,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">332ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">479ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">540B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -645,13 +639,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-8e64088f-f3ac-40c7-9e7e-be5a5a6b158d" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-1f437532-6328-4c93-96bc-96734919c75d" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-8e64088f-f3ac-40c7-9e7e-be5a5a6b158d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-8e64088f-f3ac-40c7-9e7e-be5a5a6b158d" aria-controls="collapseOne">4.2 POST /oportunidades - sin titulo (400 validacion)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-1f437532-6328-4c93-96bc-96734919c75d">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-1f437532-6328-4c93-96bc-96734919c75d" aria-controls="collapseOne">4.2 POST /oportunidades - sin titulo (400 validacion)</a></h4>
                             </div>
             
-                            <div id="requestData-8e64088f-f3ac-40c7-9e7e-be5a5a6b158d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-8e64088f-f3ac-40c7-9e7e-be5a5a6b158d">
+                            <div id="requestData-1f437532-6328-4c93-96bc-96734919c75d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-1f437532-6328-4c93-96bc-96734919c75d">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -660,7 +654,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">162ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">244ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">140B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -683,13 +677,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-6f17231e-e80f-4114-a633-e341f91b4509" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-205e51bb-756f-4b19-8024-e807ea86898f" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-6f17231e-e80f-4114-a633-e341f91b4509">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-6f17231e-e80f-4114-a633-e341f91b4509" aria-controls="collapseOne">4.3 POST /oportunidades - con rol usuario (403)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-205e51bb-756f-4b19-8024-e807ea86898f">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-205e51bb-756f-4b19-8024-e807ea86898f" aria-controls="collapseOne">4.3 POST /oportunidades - con rol usuario (403)</a></h4>
                             </div>
             
-                            <div id="requestData-6f17231e-e80f-4114-a633-e341f91b4509" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-6f17231e-e80f-4114-a633-e341f91b4509">
+                            <div id="requestData-205e51bb-756f-4b19-8024-e807ea86898f" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-205e51bb-756f-4b19-8024-e807ea86898f">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -698,7 +692,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">163ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">221ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">51B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -723,28 +717,28 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-183f9983-4bba-4342-934e-fe15364574c4" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-183f9983-4bba-4342-934e-fe15364574c4">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-183f9983-4bba-4342-934e-fe15364574c4" aria-controls="collapseOne"><strong>5. Oportunidades - leer una (GET /:id)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-19783395-cb72-4a9a-8e3a-54158962310f" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-19783395-cb72-4a9a-8e3a-54158962310f">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-19783395-cb72-4a9a-8e3a-54158962310f" aria-controls="collapseOne"><strong>5. Oportunidades - leer una (GET /:id)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-183f9983-4bba-4342-934e-fe15364574c4" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-183f9983-4bba-4342-934e-fe15364574c4">
-                    <div class="panel-group" id="collapse-request-9a66c245-8375-4b32-af9a-4d6ce2a02826" role="tablist" aria-multiselectable="true">
+            <div id="folderData-19783395-cb72-4a9a-8e3a-54158962310f" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-19783395-cb72-4a9a-8e3a-54158962310f">
+                    <div class="panel-group" id="collapse-request-51f0b556-b854-4c48-b9a2-e28c06148c13" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-9a66c245-8375-4b32-af9a-4d6ce2a02826">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-9a66c245-8375-4b32-af9a-4d6ce2a02826" aria-controls="collapseOne">5.1 GET /oportunidades/:id - la recien creada</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-51f0b556-b854-4c48-b9a2-e28c06148c13">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-51f0b556-b854-4c48-b9a2-e28c06148c13" aria-controls="collapseOne">5.1 GET /oportunidades/:id - la recien creada</a></h4>
                             </div>
             
-                            <div id="requestData-9a66c245-8375-4b32-af9a-4d6ce2a02826" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-9a66c245-8375-4b32-af9a-4d6ce2a02826">
+                            <div id="requestData-51f0b556-b854-4c48-b9a2-e28c06148c13" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-51f0b556-b854-4c48-b9a2-e28c06148c13">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">156ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">158ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">508B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -767,13 +761,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-1f55effa-3884-4a78-ab0b-046c090c5c3d" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-6fe7c22c-37b6-4ab2-98c0-66281b52010c" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-1f55effa-3884-4a78-ab0b-046c090c5c3d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-1f55effa-3884-4a78-ab0b-046c090c5c3d" aria-controls="collapseOne">5.2 GET /oportunidades/:id - id que no existe (404)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-6fe7c22c-37b6-4ab2-98c0-66281b52010c">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-6fe7c22c-37b6-4ab2-98c0-66281b52010c" aria-controls="collapseOne">5.2 GET /oportunidades/:id - id que no existe (404)</a></h4>
                             </div>
             
-                            <div id="requestData-1f55effa-3884-4a78-ab0b-046c090c5c3d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-1f55effa-3884-4a78-ab0b-046c090c5c3d">
+                            <div id="requestData-6fe7c22c-37b6-4ab2-98c0-66281b52010c" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-6fe7c22c-37b6-4ab2-98c0-66281b52010c">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -782,7 +776,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">155ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">156ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">40B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -807,28 +801,28 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-07c5b8a0-75c3-4828-b5ed-00d9cbc07d55" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-07c5b8a0-75c3-4828-b5ed-00d9cbc07d55">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-07c5b8a0-75c3-4828-b5ed-00d9cbc07d55" aria-controls="collapseOne"><strong>6. Oportunidades - actualizar (PUT)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-d4496303-3f18-4879-a003-3674a98400c9" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-d4496303-3f18-4879-a003-3674a98400c9">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-d4496303-3f18-4879-a003-3674a98400c9" aria-controls="collapseOne"><strong>6. Oportunidades - actualizar (PUT)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-07c5b8a0-75c3-4828-b5ed-00d9cbc07d55" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-07c5b8a0-75c3-4828-b5ed-00d9cbc07d55">
-                    <div class="panel-group" id="collapse-request-5cc35dca-3926-40ac-9e80-5d6c2eda6b51" role="tablist" aria-multiselectable="true">
+            <div id="folderData-d4496303-3f18-4879-a003-3674a98400c9" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-d4496303-3f18-4879-a003-3674a98400c9">
+                    <div class="panel-group" id="collapse-request-f10a9a62-bcda-42c6-a1b9-2e7e685f53f4" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-5cc35dca-3926-40ac-9e80-5d6c2eda6b51">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-5cc35dca-3926-40ac-9e80-5d6c2eda6b51" aria-controls="collapseOne">6.1 PUT /oportunidades/:id - editar titulo y cupos (200)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-f10a9a62-bcda-42c6-a1b9-2e7e685f53f4">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-f10a9a62-bcda-42c6-a1b9-2e7e685f53f4" aria-controls="collapseOne">6.1 PUT /oportunidades/:id - editar titulo y cupos (200)</a></h4>
                             </div>
             
-                            <div id="requestData-5cc35dca-3926-40ac-9e80-5d6c2eda6b51" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-5cc35dca-3926-40ac-9e80-5d6c2eda6b51">
+                            <div id="requestData-f10a9a62-bcda-42c6-a1b9-2e7e685f53f4" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-f10a9a62-bcda-42c6-a1b9-2e7e685f53f4">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">PUT</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">328ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">429ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">549B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -851,22 +845,22 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-cc741231-7307-4b42-834c-3d188874b162" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-e3453e68-f255-4292-8869-dfb4cfae2502" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-cc741231-7307-4b42-834c-3d188874b162">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-cc741231-7307-4b42-834c-3d188874b162" aria-controls="collapseOne">6.2 PUT /oportunidades/:id - con rol usuario (403)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-e3453e68-f255-4292-8869-dfb4cfae2502">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-e3453e68-f255-4292-8869-dfb4cfae2502" aria-controls="collapseOne">6.2 PUT /oportunidades/:id - con rol usuario (403)</a></h4>
                             </div>
             
-                            <div id="requestData-cc741231-7307-4b42-834c-3d188874b162" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-cc741231-7307-4b42-834c-3d188874b162">
+                            <div id="requestData-e3453e68-f255-4292-8869-dfb4cfae2502" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-e3453e68-f255-4292-8869-dfb4cfae2502">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">PUT</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">163ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">224ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">51B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -891,150 +885,28 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-80cc4a42-5082-4cec-97a6-a37b76ec1679" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-80cc4a42-5082-4cec-97a6-a37b76ec1679">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-80cc4a42-5082-4cec-97a6-a37b76ec1679" aria-controls="collapseOne"><strong>7. Favoritos</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-2b67c94a-dc33-4ecb-ac1b-cba67c97a709" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-2b67c94a-dc33-4ecb-ac1b-cba67c97a709">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-2b67c94a-dc33-4ecb-ac1b-cba67c97a709" aria-controls="collapseOne"><strong>7. Oportunidades - eliminar (DELETE)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-80cc4a42-5082-4cec-97a6-a37b76ec1679" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-80cc4a42-5082-4cec-97a6-a37b76ec1679">
-                    <div class="panel-group" id="collapse-request-ba788708-0de6-4acd-9378-d6754365fd2b" role="tablist" aria-multiselectable="true">
+            <div id="folderData-2b67c94a-dc33-4ecb-ac1b-cba67c97a709" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-2b67c94a-dc33-4ecb-ac1b-cba67c97a709">
+                    <div class="panel-group" id="collapse-request-68add469-1fe1-407c-af3a-4390398ee31b" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-ba788708-0de6-4acd-9378-d6754365fd2b">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-ba788708-0de6-4acd-9378-d6754365fd2b" aria-controls="collapseOne">7.1 POST /favoritos/:id - agregar (201)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-68add469-1fe1-407c-af3a-4390398ee31b">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-68add469-1fe1-407c-af3a-4390398ee31b" aria-controls="collapseOne">7.1 DELETE /oportunidades/:id - con rol usuario (403)</a></h4>
                             </div>
             
-                            <div id="requestData-ba788708-0de6-4acd-9378-d6754365fd2b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-ba788708-0de6-4acd-9378-d6754365fd2b">
-                                <div class="panel-body">
-            
-                                        <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/favoritos/6adf6afe5546fcc69f17ed95</a></div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">328ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">245B</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
-                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">201</div><br/>
-            
-                                        <div class="col-md-12">&nbsp;</div>
-                                        <div class="col-md-4">Tests</div>
-            
-                                        <div class="col-md-8">
-                                            <table class="table table-responsive table-condensed">
-                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
-                                                <tbody><tr><td>Status es 201 Created</td><td>1</td><td>0</td></tr><tr><td>Mensaje de agregado</td><td>1</td><td>0</td></tr><tr><td>Queda guardada la oportunidad</td><td>1</td><td>0</td></tr></tbody>
-                                            </table>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-group" id="collapse-request-5a7b7301-0d62-4166-b897-ef55ee2733f7" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-5a7b7301-0d62-4166-b897-ef55ee2733f7">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-5a7b7301-0d62-4166-b897-ef55ee2733f7" aria-controls="collapseOne">7.2 GET /favoritos - listar los mios (200)</a></h4>
-                            </div>
-            
-                            <div id="requestData-5a7b7301-0d62-4166-b897-ef55ee2733f7" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-5a7b7301-0d62-4166-b897-ef55ee2733f7">
-                                <div class="panel-body">
-            
-                                        <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos" target="_blank">http://localhost:4000/api/favoritos</a></div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">481ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">684B</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
-                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">200</div><br/>
-            
-                                        <div class="col-md-12">&nbsp;</div>
-                                        <div class="col-md-4">Tests</div>
-            
-                                        <div class="col-md-8">
-                                            <table class="table table-responsive table-condensed">
-                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
-                                                <tbody><tr><td>Status es 200 OK</td><td>1</td><td>0</td></tr><tr><td>Devuelve un arreglo de favoritos</td><td>1</td><td>0</td></tr><tr><td>Incluye la oportunidad agregada</td><td>1</td><td>0</td></tr></tbody>
-                                            </table>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-group" id="collapse-request-6b031801-2995-4a4e-ba3e-a63efd0d64bc" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-6b031801-2995-4a4e-ba3e-a63efd0d64bc">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-6b031801-2995-4a4e-ba3e-a63efd0d64bc" aria-controls="collapseOne">7.3 DELETE /favoritos/:id - quitar (200)</a></h4>
-                            </div>
-            
-                            <div id="requestData-6b031801-2995-4a4e-ba3e-a63efd0d64bc" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-6b031801-2995-4a4e-ba3e-a63efd0d64bc">
+                            <div id="requestData-68add469-1fe1-407c-af3a-4390398ee31b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-68add469-1fe1-407c-af3a-4390398ee31b">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/favoritos/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">325ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">37B</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">2</div>
-                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">200</div><br/>
-            
-                                        <div class="col-md-12">&nbsp;</div>
-                                        <div class="col-md-4">Tests</div>
-            
-                                        <div class="col-md-8">
-                                            <table class="table table-responsive table-condensed">
-                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
-                                                <tbody><tr><td>Status es 200 OK</td><td>1</td><td>0</td></tr><tr><td>Mensaje de eliminado</td><td>1</td><td>0</td></tr></tbody>
-                                            </table>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-        </div>
-        <div class="panel-group" id="collapse-folder-1e1754aa-6446-46e0-ba47-933803a3f204" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-1e1754aa-6446-46e0-ba47-933803a3f204">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-1e1754aa-6446-46e0-ba47-933803a3f204" aria-controls="collapseOne"><strong>8. Oportunidades - eliminar (DELETE)</strong></a></h4>
-            </div>
-            <br/>
-            <div id="folderData-1e1754aa-6446-46e0-ba47-933803a3f204" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-1e1754aa-6446-46e0-ba47-933803a3f204">
-                    <div class="panel-group" id="collapse-request-932019c6-cae3-4877-bc20-48bdc881229d" role="tablist" aria-multiselectable="true">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-932019c6-cae3-4877-bc20-48bdc881229d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-932019c6-cae3-4877-bc20-48bdc881229d" aria-controls="collapseOne">8.1 DELETE /oportunidades/:id - con rol usuario (403)</a></h4>
-                            </div>
-            
-                            <div id="requestData-932019c6-cae3-4877-bc20-48bdc881229d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-932019c6-cae3-4877-bc20-48bdc881229d">
-                                <div class="panel-body">
-            
-                                        <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-            
-                                    <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">160ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">209ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">51B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1057,22 +929,22 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-10c4fc1c-f8a1-4d54-8e8b-924b18fad8a6" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-fe765b97-17fa-42d5-bf61-c142bac00f00" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-10c4fc1c-f8a1-4d54-8e8b-924b18fad8a6">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-10c4fc1c-f8a1-4d54-8e8b-924b18fad8a6" aria-controls="collapseOne">8.2 DELETE /oportunidades/:id - admin (200)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-fe765b97-17fa-42d5-bf61-c142bac00f00">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-fe765b97-17fa-42d5-bf61-c142bac00f00" aria-controls="collapseOne">7.2 DELETE /oportunidades/:id - admin (200)</a></h4>
                             </div>
             
-                            <div id="requestData-10c4fc1c-f8a1-4d54-8e8b-924b18fad8a6" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-10c4fc1c-f8a1-4d54-8e8b-924b18fad8a6">
+                            <div id="requestData-fe765b97-17fa-42d5-bf61-c142bac00f00" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-fe765b97-17fa-42d5-bf61-c142bac00f00">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">318ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">417ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">36B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1095,22 +967,22 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-b495b8dc-854b-43b5-b6f8-4d3ac252a82a" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-6ae21a27-1949-4fc4-9c4e-49faa657737e" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-b495b8dc-854b-43b5-b6f8-4d3ac252a82a">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-b495b8dc-854b-43b5-b6f8-4d3ac252a82a" aria-controls="collapseOne">8.3 GET /oportunidades/:id - ya fue borrada (404)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-6ae21a27-1949-4fc4-9c4e-49faa657737e">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-6ae21a27-1949-4fc4-9c4e-49faa657737e" aria-controls="collapseOne">7.3 GET /oportunidades/:id - ya fue borrada (404)</a></h4>
                             </div>
             
-                            <div id="requestData-b495b8dc-854b-43b5-b6f8-4d3ac252a82a" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-b495b8dc-854b-43b5-b6f8-4d3ac252a82a">
+                            <div id="requestData-6ae21a27-1949-4fc4-9c4e-49faa657737e" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-6ae21a27-1949-4fc4-9c4e-49faa657737e">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95" target="_blank">http://localhost:4000/api/oportunidades/6adf6afe5546fcc69f17ed95</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278" target="_blank">http://localhost:4000/api/oportunidades/6adf72a431d39c9930eeb278</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">161ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">257ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">40B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1135,19 +1007,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-4fbfd0ae-5dd6-4ed7-9119-e656f73416c2" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-4fbfd0ae-5dd6-4ed7-9119-e656f73416c2">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-4fbfd0ae-5dd6-4ed7-9119-e656f73416c2" aria-controls="collapseOne"><strong>9. Postulaciones (estudiante y administrador)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-fdc2e3f6-49d2-4903-ade5-beadc53e4dbe" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-fdc2e3f6-49d2-4903-ade5-beadc53e4dbe">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-fdc2e3f6-49d2-4903-ade5-beadc53e4dbe" aria-controls="collapseOne"><strong>8. Postulaciones (estudiante y administrador)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-4fbfd0ae-5dd6-4ed7-9119-e656f73416c2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-4fbfd0ae-5dd6-4ed7-9119-e656f73416c2">
-                    <div class="panel-group" id="collapse-request-e7a0a945-c74d-4ca3-8ca2-5832e8a06823" role="tablist" aria-multiselectable="true">
+            <div id="folderData-fdc2e3f6-49d2-4903-ade5-beadc53e4dbe" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-fdc2e3f6-49d2-4903-ade5-beadc53e4dbe">
+                    <div class="panel-group" id="collapse-request-b4c04ae7-55ee-4064-b14b-2d3df743b001" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-e7a0a945-c74d-4ca3-8ca2-5832e8a06823">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-e7a0a945-c74d-4ca3-8ca2-5832e8a06823" aria-controls="collapseOne">9.1 POST /postulaciones - postularse a una oferta laboral</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-b4c04ae7-55ee-4064-b14b-2d3df743b001">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-b4c04ae7-55ee-4064-b14b-2d3df743b001" aria-controls="collapseOne">8.1 POST /postulaciones - postularse a una oferta laboral</a></h4>
                             </div>
             
-                            <div id="requestData-e7a0a945-c74d-4ca3-8ca2-5832e8a06823" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-e7a0a945-c74d-4ca3-8ca2-5832e8a06823">
+                            <div id="requestData-b4c04ae7-55ee-4064-b14b-2d3df743b001" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-b4c04ae7-55ee-4064-b14b-2d3df743b001">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -1156,7 +1028,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">1259ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">1489ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">831B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1179,13 +1051,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-51e9c10e-580c-44b8-81eb-d7d1ebfd5568" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-ed9f1620-f9bb-46b4-914d-b5628e6605bf" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-51e9c10e-580c-44b8-81eb-d7d1ebfd5568">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-51e9c10e-580c-44b8-81eb-d7d1ebfd5568" aria-controls="collapseOne">9.2 GET /postulaciones/mias - mis postulaciones</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-ed9f1620-f9bb-46b4-914d-b5628e6605bf">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-ed9f1620-f9bb-46b4-914d-b5628e6605bf" aria-controls="collapseOne">8.2 GET /postulaciones/mias - mis postulaciones</a></h4>
                             </div>
             
-                            <div id="requestData-51e9c10e-580c-44b8-81eb-d7d1ebfd5568" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-51e9c10e-580c-44b8-81eb-d7d1ebfd5568">
+                            <div id="requestData-ed9f1620-f9bb-46b4-914d-b5628e6605bf" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-ed9f1620-f9bb-46b4-914d-b5628e6605bf">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1194,7 +1066,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">471ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">671ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">798B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1217,13 +1089,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-6ad110c6-395e-41d5-bb2f-897640221130" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-3e3bc3e0-2c81-4a08-854f-f0dbb920ae9b" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-6ad110c6-395e-41d5-bb2f-897640221130">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-6ad110c6-395e-41d5-bb2f-897640221130" aria-controls="collapseOne">9.3 GET /postulaciones - todas (administrador)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-3e3bc3e0-2c81-4a08-854f-f0dbb920ae9b">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-3e3bc3e0-2c81-4a08-854f-f0dbb920ae9b" aria-controls="collapseOne">8.3 GET /postulaciones - todas (administrador)</a></h4>
                             </div>
             
-                            <div id="requestData-6ad110c6-395e-41d5-bb2f-897640221130" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-6ad110c6-395e-41d5-bb2f-897640221130">
+                            <div id="requestData-3e3bc3e0-2c81-4a08-854f-f0dbb920ae9b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-3e3bc3e0-2c81-4a08-854f-f0dbb920ae9b">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1232,8 +1104,8 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">483ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">3.41KB</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">561ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">890B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
                                     <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
@@ -1255,22 +1127,22 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-9a3bc678-3c4c-4190-b1da-e0dc4f3a7003" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-dc2b4431-85f6-43fe-8ec7-74a49b535bbb" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-9a3bc678-3c4c-4190-b1da-e0dc4f3a7003">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-9a3bc678-3c4c-4190-b1da-e0dc4f3a7003" aria-controls="collapseOne">9.4 PUT /postulaciones/:id/estado - cambiar estado (admin)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-dc2b4431-85f6-43fe-8ec7-74a49b535bbb">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-dc2b4431-85f6-43fe-8ec7-74a49b535bbb" aria-controls="collapseOne">8.4 PUT /postulaciones/:id/estado - cambiar estado (admin)</a></h4>
                             </div>
             
-                            <div id="requestData-9a3bc678-3c4c-4190-b1da-e0dc4f3a7003" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-9a3bc678-3c4c-4190-b1da-e0dc4f3a7003">
+                            <div id="requestData-dc2b4431-85f6-43fe-8ec7-74a49b535bbb" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-dc2b4431-85f6-43fe-8ec7-74a49b535bbb">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">PUT</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/postulaciones/6adf6b025546fcc69f17edad/estado" target="_blank">http://localhost:4000/api/postulaciones/6adf6b025546fcc69f17edad/estado</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/postulaciones/6adf72a831d39c9930eeb288/estado" target="_blank">http://localhost:4000/api/postulaciones/6adf72a831d39c9930eeb288/estado</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">945ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">1211ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">919B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1293,22 +1165,22 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-a37a019e-4e6e-4175-92cb-be196a5d659d" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-541eaff2-9773-4f49-a259-275f296833a4" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-a37a019e-4e6e-4175-92cb-be196a5d659d">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-a37a019e-4e6e-4175-92cb-be196a5d659d" aria-controls="collapseOne">9.5 DELETE /postulaciones/:id - borrar</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-541eaff2-9773-4f49-a259-275f296833a4">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-541eaff2-9773-4f49-a259-275f296833a4" aria-controls="collapseOne">8.5 DELETE /postulaciones/:id - borrar</a></h4>
                             </div>
             
-                            <div id="requestData-a37a019e-4e6e-4175-92cb-be196a5d659d" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-a37a019e-4e6e-4175-92cb-be196a5d659d">
+                            <div id="requestData-541eaff2-9773-4f49-a259-275f296833a4" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-541eaff2-9773-4f49-a259-275f296833a4">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
-                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/postulaciones/6adf6b025546fcc69f17edad" target="_blank">http://localhost:4000/api/postulaciones/6adf6b025546fcc69f17edad</a></div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/postulaciones/6adf72a831d39c9930eeb288" target="_blank">http://localhost:4000/api/postulaciones/6adf72a831d39c9930eeb288</a></div>
             
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">481ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">604ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">37B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1333,19 +1205,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-422624a2-ef62-4076-99b9-ecc014b9d45a" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-422624a2-ef62-4076-99b9-ecc014b9d45a">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-422624a2-ef62-4076-99b9-ecc014b9d45a" aria-controls="collapseOne"><strong>10. Inscripciones</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-042d275c-d1f0-48a9-9e70-4a258e8b2d10" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-042d275c-d1f0-48a9-9e70-4a258e8b2d10">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-042d275c-d1f0-48a9-9e70-4a258e8b2d10" aria-controls="collapseOne"><strong>9. Inscripciones</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-422624a2-ef62-4076-99b9-ecc014b9d45a" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-422624a2-ef62-4076-99b9-ecc014b9d45a">
-                    <div class="panel-group" id="collapse-request-822e21f4-d7a1-4926-9166-02d7bc09c9b2" role="tablist" aria-multiselectable="true">
+            <div id="folderData-042d275c-d1f0-48a9-9e70-4a258e8b2d10" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-042d275c-d1f0-48a9-9e70-4a258e8b2d10">
+                    <div class="panel-group" id="collapse-request-33c5effd-9c2e-47e1-b5d9-ffa17aac7767" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-822e21f4-d7a1-4926-9166-02d7bc09c9b2">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-822e21f4-d7a1-4926-9166-02d7bc09c9b2" aria-controls="collapseOne">10.1 POST /inscripciones - inscribirse a un curso</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-33c5effd-9c2e-47e1-b5d9-ffa17aac7767">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-33c5effd-9c2e-47e1-b5d9-ffa17aac7767" aria-controls="collapseOne">9.1 POST /inscripciones - inscribirse a un curso</a></h4>
                             </div>
             
-                            <div id="requestData-822e21f4-d7a1-4926-9166-02d7bc09c9b2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-822e21f4-d7a1-4926-9166-02d7bc09c9b2">
+                            <div id="requestData-33c5effd-9c2e-47e1-b5d9-ffa17aac7767" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-33c5effd-9c2e-47e1-b5d9-ffa17aac7767">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -1354,7 +1226,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">1274ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">1486ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">737B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1377,13 +1249,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-9ad7b3a9-bc36-4cdf-8833-5b3a4ae48719" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-fa411dbe-32a8-4bc4-a380-fa2c313b4051" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-9ad7b3a9-bc36-4cdf-8833-5b3a4ae48719">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-9ad7b3a9-bc36-4cdf-8833-5b3a4ae48719" aria-controls="collapseOne">10.2 GET /inscripciones/mias - mis inscripciones</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-fa411dbe-32a8-4bc4-a380-fa2c313b4051">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-fa411dbe-32a8-4bc4-a380-fa2c313b4051" aria-controls="collapseOne">9.2 GET /inscripciones/mias - mis inscripciones</a></h4>
                             </div>
             
-                            <div id="requestData-9ad7b3a9-bc36-4cdf-8833-5b3a4ae48719" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-9ad7b3a9-bc36-4cdf-8833-5b3a4ae48719">
+                            <div id="requestData-fa411dbe-32a8-4bc4-a380-fa2c313b4051" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-fa411dbe-32a8-4bc4-a380-fa2c313b4051">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1392,7 +1264,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">473ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">629ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">704B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1415,13 +1287,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-c070a33a-43ca-4a91-8acb-ff12f2f7f8dc" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-e73c6f7c-c758-45e3-9eff-4df0b06cf391" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-c070a33a-43ca-4a91-8acb-ff12f2f7f8dc">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-c070a33a-43ca-4a91-8acb-ff12f2f7f8dc" aria-controls="collapseOne">10.3 DELETE /inscripciones/oportunidad/:id - anular</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-e73c6f7c-c758-45e3-9eff-4df0b06cf391">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-e73c6f7c-c758-45e3-9eff-4df0b06cf391" aria-controls="collapseOne">9.3 DELETE /inscripciones/oportunidad/:id - anular</a></h4>
                             </div>
             
-                            <div id="requestData-c070a33a-43ca-4a91-8acb-ff12f2f7f8dc" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-c070a33a-43ca-4a91-8acb-ff12f2f7f8dc">
+                            <div id="requestData-e73c6f7c-c758-45e3-9eff-4df0b06cf391" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-e73c6f7c-c758-45e3-9eff-4df0b06cf391">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
@@ -1430,7 +1302,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">485ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">514ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">35B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1455,19 +1327,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-c97b089a-028b-4c0c-8f15-f37ec3b1aac3" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-c97b089a-028b-4c0c-8f15-f37ec3b1aac3">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-c97b089a-028b-4c0c-8f15-f37ec3b1aac3" aria-controls="collapseOne"><strong>11. Notificaciones</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-a6169c63-cfd2-4ca1-a7a2-7ac82f99d316" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-a6169c63-cfd2-4ca1-a7a2-7ac82f99d316">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-a6169c63-cfd2-4ca1-a7a2-7ac82f99d316" aria-controls="collapseOne"><strong>10. Notificaciones</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-c97b089a-028b-4c0c-8f15-f37ec3b1aac3" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-c97b089a-028b-4c0c-8f15-f37ec3b1aac3">
-                    <div class="panel-group" id="collapse-request-970e7d87-8165-4649-b7c5-bb56a5644a49" role="tablist" aria-multiselectable="true">
+            <div id="folderData-a6169c63-cfd2-4ca1-a7a2-7ac82f99d316" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-a6169c63-cfd2-4ca1-a7a2-7ac82f99d316">
+                    <div class="panel-group" id="collapse-request-d7ea290b-398d-4592-b19e-77193c4cedb6" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-970e7d87-8165-4649-b7c5-bb56a5644a49">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-970e7d87-8165-4649-b7c5-bb56a5644a49" aria-controls="collapseOne">11.1 GET /notificaciones - las mias</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-d7ea290b-398d-4592-b19e-77193c4cedb6">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-d7ea290b-398d-4592-b19e-77193c4cedb6" aria-controls="collapseOne">10.1 GET /notificaciones - las mias</a></h4>
                             </div>
             
-                            <div id="requestData-970e7d87-8165-4649-b7c5-bb56a5644a49" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-970e7d87-8165-4649-b7c5-bb56a5644a49">
+                            <div id="requestData-d7ea290b-398d-4592-b19e-77193c4cedb6" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-d7ea290b-398d-4592-b19e-77193c4cedb6">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1476,8 +1348,8 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">323ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">2.57KB</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">385ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">2.38KB</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
                                     <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
@@ -1499,13 +1371,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-9ffa698c-1e73-42e0-a0fc-5688788bc6cd" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-c05e5643-d02e-43ea-b074-2d6f5ca9bc4a" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-9ffa698c-1e73-42e0-a0fc-5688788bc6cd">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-9ffa698c-1e73-42e0-a0fc-5688788bc6cd" aria-controls="collapseOne">11.2 PUT /notificaciones/leer-todas - marcar todas como leidas</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-c05e5643-d02e-43ea-b074-2d6f5ca9bc4a">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-c05e5643-d02e-43ea-b074-2d6f5ca9bc4a" aria-controls="collapseOne">10.2 PUT /notificaciones/leer-todas - marcar todas como leidas</a></h4>
                             </div>
             
-                            <div id="requestData-9ffa698c-1e73-42e0-a0fc-5688788bc6cd" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-9ffa698c-1e73-42e0-a0fc-5688788bc6cd">
+                            <div id="requestData-c05e5643-d02e-43ea-b074-2d6f5ca9bc4a" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-c05e5643-d02e-43ea-b074-2d6f5ca9bc4a">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">PUT</div>
@@ -1514,7 +1386,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">325ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">429ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">68B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1537,13 +1409,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-1eb3d216-ee27-4e83-b631-30160a3ee245" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-87a7fa55-4447-4233-8054-db63f9b6acdb" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-1eb3d216-ee27-4e83-b631-30160a3ee245">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-1eb3d216-ee27-4e83-b631-30160a3ee245" aria-controls="collapseOne">11.3 GET /notificaciones/recientes - alertas enviadas (admin)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-87a7fa55-4447-4233-8054-db63f9b6acdb">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-87a7fa55-4447-4233-8054-db63f9b6acdb" aria-controls="collapseOne">10.3 GET /notificaciones/recientes - alertas enviadas (admin)</a></h4>
                             </div>
             
-                            <div id="requestData-1eb3d216-ee27-4e83-b631-30160a3ee245" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-1eb3d216-ee27-4e83-b631-30160a3ee245">
+                            <div id="requestData-87a7fa55-4447-4233-8054-db63f9b6acdb" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-87a7fa55-4447-4233-8054-db63f9b6acdb">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1552,8 +1424,8 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">479ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">3.21KB</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">587ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">3.33KB</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
                                     <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">2</div>
@@ -1575,13 +1447,13 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group" id="collapse-request-117612d3-2511-47db-a89f-fd4b6b68ef1b" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="collapse-request-f68a604b-78cb-4c9a-a2a3-a402da5a3247" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-117612d3-2511-47db-a89f-fd4b6b68ef1b">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-117612d3-2511-47db-a89f-fd4b6b68ef1b" aria-controls="collapseOne">11.4 POST /notificaciones - enviar alerta a todos (admin)</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-f68a604b-78cb-4c9a-a2a3-a402da5a3247">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-f68a604b-78cb-4c9a-a2a3-a402da5a3247" aria-controls="collapseOne">10.4 POST /notificaciones - enviar alerta a todos (admin)</a></h4>
                             </div>
             
-                            <div id="requestData-117612d3-2511-47db-a89f-fd4b6b68ef1b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-117612d3-2511-47db-a89f-fd4b6b68ef1b">
+                            <div id="requestData-f68a604b-78cb-4c9a-a2a3-a402da5a3247" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-f68a604b-78cb-4c9a-a2a3-a402da5a3247">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
@@ -1590,7 +1462,7 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">487ms</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">648ms</div><br/>
                                     <div class="col-md-4">Mean size per request</div><div class="col-md-8">57B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
@@ -1615,19 +1487,19 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                     </div>
             </div>
         </div>
-        <div class="panel-group" id="collapse-folder-6f9543f9-d4fb-4d6e-a672-fb29b5f7228c" role="tablist" aria-multiselectable="true">
-            <div role="tab" id="folderHead-6f9543f9-d4fb-4d6e-a672-fb29b5f7228c">
-                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-6f9543f9-d4fb-4d6e-a672-fb29b5f7228c" aria-controls="collapseOne"><strong>12. Usuarios (administrador)</strong></a></h4>
+        <div class="panel-group" id="collapse-folder-f6f54e69-dfa3-490f-8940-ab3c47a90778" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-f6f54e69-dfa3-490f-8940-ab3c47a90778">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-f6f54e69-dfa3-490f-8940-ab3c47a90778" aria-controls="collapseOne"><strong>11. Usuarios (administrador)</strong></a></h4>
             </div>
             <br/>
-            <div id="folderData-6f9543f9-d4fb-4d6e-a672-fb29b5f7228c" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-6f9543f9-d4fb-4d6e-a672-fb29b5f7228c">
-                    <div class="panel-group" id="collapse-request-0b17080f-e259-41ea-922d-64a8f3a123ff" role="tablist" aria-multiselectable="true">
+            <div id="folderData-f6f54e69-dfa3-490f-8940-ab3c47a90778" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-f6f54e69-dfa3-490f-8940-ab3c47a90778">
+                    <div class="panel-group" id="collapse-request-e02d57cc-9f3d-47fc-a171-9e0207e5823b" role="tablist" aria-multiselectable="true">
                         <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="requestHead-0b17080f-e259-41ea-922d-64a8f3a123ff">
-                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-0b17080f-e259-41ea-922d-64a8f3a123ff" aria-controls="collapseOne">12.1 GET /auth/usuarios - listar usuarios</a></h4>
+                            <div class="panel-heading" role="tab" id="requestHead-e02d57cc-9f3d-47fc-a171-9e0207e5823b">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-e02d57cc-9f3d-47fc-a171-9e0207e5823b" aria-controls="collapseOne">11.1 GET /auth/usuarios - listar usuarios</a></h4>
                             </div>
             
-                            <div id="requestData-0b17080f-e259-41ea-922d-64a8f3a123ff" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-0b17080f-e259-41ea-922d-64a8f3a123ff">
+                            <div id="requestData-e02d57cc-9f3d-47fc-a171-9e0207e5823b" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-e02d57cc-9f3d-47fc-a171-9e0207e5823b">
                                 <div class="panel-body">
             
                                         <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
@@ -1636,8 +1508,8 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                     <div class="col-md-12">&nbsp;</div>
             
                                     <div class="col-md-12">&nbsp;</div>
-                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">368ms</div><br/>
-                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">1.78KB</div><br/>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">315ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">872B</div><br/>
             
                                     <div class="col-md-12">&nbsp;</div>
                                     <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">4</div>
@@ -1653,6 +1525,128 @@ Las pruebas crean una oportunidad, la editan, la borran y limpian los favoritos 
                                             <table class="table table-responsive table-condensed">
                                                 <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
                                                 <tbody><tr><td>Status es 200 OK</td><td>1</td><td>0</td></tr><tr><td>Devuelve el total de usuarios</td><td>1</td><td>0</td></tr><tr><td>Devuelve el arreglo de usuarios</td><td>1</td><td>0</td></tr><tr><td>No expone las contrasenas</td><td>1</td><td>0</td></tr></tbody>
+                                            </table>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="panel-group" id="collapse-folder-b06b4ccc-f51a-44fe-a823-b636b3c089c2" role="tablist" aria-multiselectable="true">
+            <div role="tab" id="folderHead-b06b4ccc-f51a-44fe-a823-b636b3c089c2">
+                <h4 style="font-size: 18px;" class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#folderData-b06b4ccc-f51a-44fe-a823-b636b3c089c2" aria-controls="collapseOne"><strong>12. Favoritos</strong></a></h4>
+            </div>
+            <br/>
+            <div id="folderData-b06b4ccc-f51a-44fe-a823-b636b3c089c2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="folderHead-b06b4ccc-f51a-44fe-a823-b636b3c089c2">
+                    <div class="panel-group" id="collapse-request-99e78cea-7d26-496f-81df-cb8ff7b426b9" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="requestHead-99e78cea-7d26-496f-81df-cb8ff7b426b9">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-99e78cea-7d26-496f-81df-cb8ff7b426b9" aria-controls="collapseOne">12.1 POST /favoritos/:id - agregar (201)</a></h4>
+                            </div>
+            
+                            <div id="requestData-99e78cea-7d26-496f-81df-cb8ff7b426b9" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-99e78cea-7d26-496f-81df-cb8ff7b426b9">
+                                <div class="panel-body">
+            
+                                        <div class="col-md-4">Method</div><div class="col-md-8">POST</div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos/6ada3b69ee47323a565d7363" target="_blank">http://localhost:4000/api/favoritos/6ada3b69ee47323a565d7363</a></div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">473ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">245B</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
+                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">201</div><br/>
+            
+                                        <div class="col-md-12">&nbsp;</div>
+                                        <div class="col-md-4">Tests</div>
+            
+                                        <div class="col-md-8">
+                                            <table class="table table-responsive table-condensed">
+                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
+                                                <tbody><tr><td>Status es 201 Created</td><td>1</td><td>0</td></tr><tr><td>Mensaje de agregado</td><td>1</td><td>0</td></tr><tr><td>Queda guardada la oportunidad</td><td>1</td><td>0</td></tr></tbody>
+                                            </table>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group" id="collapse-request-119a05f4-5375-4968-8bc3-371471161b8f" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="requestHead-119a05f4-5375-4968-8bc3-371471161b8f">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-119a05f4-5375-4968-8bc3-371471161b8f" aria-controls="collapseOne">12.2 GET /favoritos - listar los mios (200)</a></h4>
+                            </div>
+            
+                            <div id="requestData-119a05f4-5375-4968-8bc3-371471161b8f" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-119a05f4-5375-4968-8bc3-371471161b8f">
+                                <div class="panel-body">
+            
+                                        <div class="col-md-4">Method</div><div class="col-md-8">GET</div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos" target="_blank">http://localhost:4000/api/favoritos</a></div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">666ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">680B</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">3</div>
+                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">200</div><br/>
+            
+                                        <div class="col-md-12">&nbsp;</div>
+                                        <div class="col-md-4">Tests</div>
+            
+                                        <div class="col-md-8">
+                                            <table class="table table-responsive table-condensed">
+                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
+                                                <tbody><tr><td>Status es 200 OK</td><td>1</td><td>0</td></tr><tr><td>Devuelve un arreglo de favoritos</td><td>1</td><td>0</td></tr><tr><td>Incluye la oportunidad agregada</td><td>1</td><td>0</td></tr></tbody>
+                                            </table>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group" id="collapse-request-440255cc-235a-4f59-b047-227a27571870" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="requestHead-440255cc-235a-4f59-b047-227a27571870">
+                                <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#requestData-440255cc-235a-4f59-b047-227a27571870" aria-controls="collapseOne">12.3 DELETE /favoritos/:id - quitar (200)</a></h4>
+                            </div>
+            
+                            <div id="requestData-440255cc-235a-4f59-b047-227a27571870" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="requestHead-440255cc-235a-4f59-b047-227a27571870">
+                                <div class="panel-body">
+            
+                                        <div class="col-md-4">Method</div><div class="col-md-8">DELETE</div>
+                                        <div class="col-md-4">URL</div><div class="col-md-8"><a href="http://localhost:4000/api/favoritos/6ada3b69ee47323a565d7363" target="_blank">http://localhost:4000/api/favoritos/6ada3b69ee47323a565d7363</a></div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <div class="col-md-4">Mean time per request</div><div class="col-md-8">465ms</div><br/>
+                                    <div class="col-md-4">Mean size per request</div><div class="col-md-8">37B</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Total passed tests</div><div class="col-md-8">2</div>
+                                    <div class="col-md-4">Total failed tests</div><div class="col-md-8">0</div><br/>
+            
+                                    <div class="col-md-12">&nbsp;</div>
+                                    <br/><div class="col-md-4">Status code</div><div class="col-md-8">200</div><br/>
+            
+                                        <div class="col-md-12">&nbsp;</div>
+                                        <div class="col-md-4">Tests</div>
+            
+                                        <div class="col-md-8">
+                                            <table class="table table-responsive table-condensed">
+                                                <thead><tr><th>Name</th><th>Pass count</th><th>Fail count</th></tr></thead>
+                                                <tbody><tr><td>Status es 200 OK</td><td>1</td><td>0</td></tr><tr><td>Mensaje de eliminado</td><td>1</td><td>0</td></tr></tbody>
                                             </table>
                                         </div>
                                 </div>

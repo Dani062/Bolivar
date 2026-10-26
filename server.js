@@ -21,12 +21,15 @@ app.use(cors());
 app.use(express.json());
 
 // Límite de intentos para evitar fuerza bruta en login/registro.
-// Se puede cambiar con la variable RATE_LIMIT_MAX (útil al hacer
-// demostraciones, donde la colección de Postman repite los logins).
+//
+// Solo se cuentan los intentos que FALLAN: los que sí funcionan no suman al
+// contador, así que un usuario (o la colección de Postman, que hace varios
+// logins) no se queda bloqueado. El límite se cambia con RATE_LIMIT_MAX.
 const limitadorAuth = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: Number(process.env.RATE_LIMIT_MAX) || 50,
-  message: { mensaje: 'Demasiados intentos. Intenta de nuevo más tarde.' }
+  max: Number(process.env.RATE_LIMIT_MAX) || 100,
+  skipSuccessfulRequests: true,
+  message: { mensaje: 'Demasiados intentos fallidos. Intenta de nuevo más tarde.' }
 });
 app.use('/api/auth/login', limitadorAuth);
 app.use('/api/auth/registro', limitadorAuth);

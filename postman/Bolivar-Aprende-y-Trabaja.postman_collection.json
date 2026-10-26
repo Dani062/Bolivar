@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Bolivar Aprende y Trabaja - API (Node.js + Express + MongoDB)",
-    "description": "Coleccion de pruebas del CRUD de la API del backend. Cubre GET, POST, PUT y DELETE de oportunidades, autenticacion con JWT, permisos por rol, favoritos y validaciones.\n\nRutas de oportunidades:\n  GET    /oportunidades        listado publico (solo activas)\n  GET    /oportunidades/todas  listado completo (solo administrador, requiere token)\n  GET    /oportunidades/:id    leer una oportunidad\n  POST   /oportunidades        crear (solo administrador)\n  PUT    /oportunidades/:id    actualizar (solo administrador)\n  DELETE /oportunidades/:id    eliminar (solo administrador)\n\n\nRutas de la sesion del usuario (todo se guarda en MongoDB):\n  POST   /auth/registro      crea la cuenta (devuelve token)\n  POST   /auth/login         inicia sesion (devuelve token)\n  GET    /auth/perfil        datos del usuario con sesion\n  PUT    /auth/perfil        actualiza nombre, apellido, municipio, tipoPerfil, telefono\n  GET    /auth/usuarios      listado de usuarios (solo administrador)\n  POST   /postulaciones      el estudiante se postula a una oferta laboral\n  GET    /postulaciones/mias postulaciones del usuario con sesion\n  GET    /postulaciones      todas las postulaciones (solo administrador)\n  PUT    /postulaciones/:id/estado  cambia el estado (solo administrador)\n  POST   /inscripciones      el estudiante se inscribe a un curso\n  GET    /inscripciones/mias inscripciones del usuario con sesion\n  DELETE /inscripciones/oportunidad/:id  anula la inscripcion\n  GET    /notificaciones      notificaciones del usuario con sesion\n  PUT    /notificaciones/leer-todas  marca todas como leidas\n  POST   /notificaciones      el administrador manda una alerta\nComo usarla:\n1. Encender el servidor: npm start (en la carpeta backend). Crear el admin una vez: npm run seed.\n2. En Postman: Import > seleccionar este archivo.\n3. Verificar la variable baseUrl (por defecto http://localhost:4000/api).\n4. Click derecho sobre la coleccion > Run collection > Run.\n\nLas pruebas crean una oportunidad, la editan, la borran y limpian los favoritos que agregan, asi que se pueden correr varias veces sin dejar basura.",
+    "description": "Coleccion de pruebas del CRUD de la API del backend (Node.js + Express + MongoDB).\nCubre el CRUD completo de oportunidades, la sesion con JWT, los permisos por rol,\nlas postulaciones, las inscripciones, las notificaciones y los favoritos.\nCada peticion trae sus propias pruebas automaticas (pm.test).\n\nComo usarla:\n1. Encender el servidor: npm start (en la carpeta backend).\n   Crear el administrador una vez: npm run seed.\n2. En Postman: Import > seleccionar este archivo.\n3. Activar el entorno \"Bolivar Aprende y Trabaja - Local\" (icono del ojo, arriba a la derecha).\n4. Click derecho sobre la coleccion > Run collection > Run.\n\nEl orden de los grupos sigue el flujo de uso:\n  1. Estado del servidor\n  2. Autenticacion (JWT)\n  3-7. CRUD de oportunidades (leer, crear, leer una, actualizar, eliminar)\n  8. Postulaciones\n  9. Inscripciones\n  10. Notificaciones\n  11. Usuarios\n  12. Favoritos\n\nLas pruebas crean una oportunidad, la editan, la borran y limpian lo que\nagregan, asi que se pueden correr varias veces sin dejar basura.\n\nTambien se puede correr desde la terminal, sin abrir Postman:\n  npm run test:postman        (muestra el resumen en la consola)\n  npm run reporte:postman     (ademas genera un reporte HTML)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -405,6 +405,7 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "(() => {",
                   "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
@@ -412,20 +413,21 @@
                   "    pm.test('Devuelve un arreglo de oportunidades', () => pm.expect(data.oportunidades).to.be.an('array'));",
                   "    pm.test('Devuelve el total y la paginacion', () => {",
                   "        pm.expect(data.total).to.be.a('number');",
-                  "    pm.collectionVariables.set('totalPublicas', data.total);",
-                  "    const laboral = data.oportunidades.find((o) => o.clase === 'laboral');",
-                  "    const academica = data.oportunidades.find((o) => o.clase !== 'laboral');",
-                  "    if (laboral) pm.collectionVariables.set('idOportunidadLaboral', laboral._id);",
-                  "    if (academica) pm.collectionVariables.set('idOportunidadAcademica', academica._id);",
                   "        pm.expect(data.pagina).to.eql(1);",
                   "        pm.expect(data).to.have.property('totalPaginas');",
                   "    });",
                   "    pm.test('Todas las oportunidades estan activas', () => {",
                   "        data.oportunidades.forEach((o) => pm.expect(o.estado).to.eql('activa'));",
                   "    });",
+                  "",
+                  "    // Datos que usan las peticiones siguientes.",
+                  "    pm.collectionVariables.set('totalPublicas', data.total);",
+                  "    const laboral = data.oportunidades.find((o) => o.clase === 'laboral');",
+                  "    const academica = data.oportunidades.find((o) => o.clase !== 'laboral');",
+                  "    if (laboral) pm.collectionVariables.set('idOportunidadLaboral', laboral._id);",
+                  "    if (academica) pm.collectionVariables.set('idOportunidadAcademica', academica._id);",
                   "})();"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
@@ -913,130 +915,10 @@
       ]
     },
     {
-      "name": "7. Favoritos",
+      "name": "7. Oportunidades - eliminar (DELETE)",
       "item": [
         {
-          "name": "7.1 POST /favoritos/:id - agregar (201)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "(() => {",
-                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
-                  "    const data = pm.response.json();",
-                  "    pm.test('Mensaje de agregado', () => pm.expect(data.mensaje).to.eql('Agregado a favoritos.'));",
-                  "    pm.test('Queda guardada la oportunidad', () => pm.expect(data.favorito.oportunidad).to.eql(pm.collectionVariables.get('idOportunidad')));",
-                  "})();"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{tokenAdmin}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/favoritos/{{idOportunidad}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favoritos",
-                "{{idOportunidad}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "7.2 GET /favoritos - listar los mios (200)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "(() => {",
-                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
-                  "    const data = pm.response.json();",
-                  "    pm.test('Devuelve un arreglo de favoritos', () => pm.expect(data.favoritos).to.be.an('array'));",
-                  "    pm.test('Incluye la oportunidad agregada', () => {",
-                  "        const ids = data.favoritos.map((f) => f.oportunidad && f.oportunidad._id);",
-                  "        pm.expect(ids).to.include(pm.collectionVariables.get('idOportunidad'));",
-                  "    });",
-                  "})();"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{tokenAdmin}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/favoritos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favoritos"
-              ]
-            }
-          }
-        },
-        {
-          "name": "7.3 DELETE /favoritos/:id - quitar (200)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "(() => {",
-                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
-                  "    const data = pm.response.json();",
-                  "    pm.test('Mensaje de eliminado', () => pm.expect(data.mensaje).to.eql('Eliminado de favoritos.'));",
-                  "})();"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{tokenAdmin}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/favoritos/{{idOportunidad}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favoritos",
-                "{{idOportunidad}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "8. Oportunidades - eliminar (DELETE)",
-      "item": [
-        {
-          "name": "8.1 DELETE /oportunidades/:id - con rol usuario (403)",
+          "name": "7.1 DELETE /oportunidades/:id - con rol usuario (403)",
           "event": [
             {
               "listen": "test",
@@ -1072,7 +954,7 @@
           }
         },
         {
-          "name": "8.2 DELETE /oportunidades/:id - admin (200)",
+          "name": "7.2 DELETE /oportunidades/:id - admin (200)",
           "event": [
             {
               "listen": "test",
@@ -1109,7 +991,7 @@
           }
         },
         {
-          "name": "8.3 GET /oportunidades/:id - ya fue borrada (404)",
+          "name": "7.3 GET /oportunidades/:id - ya fue borrada (404)",
           "event": [
             {
               "listen": "test",
@@ -1143,10 +1025,10 @@
       ]
     },
     {
-      "name": "9. Postulaciones (estudiante y administrador)",
+      "name": "8. Postulaciones (estudiante y administrador)",
       "item": [
         {
-          "name": "9.1 POST /postulaciones - postularse a una oferta laboral",
+          "name": "8.1 POST /postulaciones - postularse a una oferta laboral",
           "request": {
             "method": "POST",
             "header": [
@@ -1194,7 +1076,7 @@
           ]
         },
         {
-          "name": "9.2 GET /postulaciones/mias - mis postulaciones",
+          "name": "8.2 GET /postulaciones/mias - mis postulaciones",
           "request": {
             "method": "GET",
             "header": [
@@ -1235,7 +1117,7 @@
           ]
         },
         {
-          "name": "9.3 GET /postulaciones - todas (administrador)",
+          "name": "8.3 GET /postulaciones - todas (administrador)",
           "request": {
             "method": "GET",
             "header": [
@@ -1275,7 +1157,7 @@
           ]
         },
         {
-          "name": "9.4 PUT /postulaciones/:id/estado - cambiar estado (admin)",
+          "name": "8.4 PUT /postulaciones/:id/estado - cambiar estado (admin)",
           "request": {
             "method": "PUT",
             "header": [
@@ -1324,7 +1206,7 @@
           ]
         },
         {
-          "name": "9.5 DELETE /postulaciones/:id - borrar",
+          "name": "8.5 DELETE /postulaciones/:id - borrar",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1363,10 +1245,10 @@
       ]
     },
     {
-      "name": "10. Inscripciones",
+      "name": "9. Inscripciones",
       "item": [
         {
-          "name": "10.1 POST /inscripciones - inscribirse a un curso",
+          "name": "9.1 POST /inscripciones - inscribirse a un curso",
           "request": {
             "method": "POST",
             "header": [
@@ -1412,7 +1294,7 @@
           ]
         },
         {
-          "name": "10.2 GET /inscripciones/mias - mis inscripciones",
+          "name": "9.2 GET /inscripciones/mias - mis inscripciones",
           "request": {
             "method": "GET",
             "header": [
@@ -1453,7 +1335,7 @@
           ]
         },
         {
-          "name": "10.3 DELETE /inscripciones/oportunidad/:id - anular",
+          "name": "9.3 DELETE /inscripciones/oportunidad/:id - anular",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1493,10 +1375,10 @@
       ]
     },
     {
-      "name": "11. Notificaciones",
+      "name": "10. Notificaciones",
       "item": [
         {
-          "name": "11.1 GET /notificaciones - las mias",
+          "name": "10.1 GET /notificaciones - las mias",
           "request": {
             "method": "GET",
             "header": [
@@ -1538,7 +1420,7 @@
           ]
         },
         {
-          "name": "11.2 PUT /notificaciones/leer-todas - marcar todas como leidas",
+          "name": "10.2 PUT /notificaciones/leer-todas - marcar todas como leidas",
           "request": {
             "method": "PUT",
             "header": [
@@ -1575,7 +1457,7 @@
           ]
         },
         {
-          "name": "11.3 GET /notificaciones/recientes - alertas enviadas (admin)",
+          "name": "10.3 GET /notificaciones/recientes - alertas enviadas (admin)",
           "request": {
             "method": "GET",
             "header": [
@@ -1618,7 +1500,7 @@
           ]
         },
         {
-          "name": "11.4 POST /notificaciones - enviar alerta a todos (admin)",
+          "name": "10.4 POST /notificaciones - enviar alerta a todos (admin)",
           "request": {
             "method": "POST",
             "header": [
@@ -1665,10 +1547,10 @@
       ]
     },
     {
-      "name": "12. Usuarios (administrador)",
+      "name": "11. Usuarios (administrador)",
       "item": [
         {
-          "name": "12.1 GET /auth/usuarios - listar usuarios",
+          "name": "11.1 GET /auth/usuarios - listar usuarios",
           "request": {
             "method": "GET",
             "header": [
@@ -1707,6 +1589,126 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "12. Favoritos",
+      "item": [
+        {
+          "name": "12.1 POST /favoritos/:id - agregar (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de agregado', () => pm.expect(data.mensaje).to.eql('Agregado a favoritos.'));",
+                  "    pm.test('Queda guardada la oportunidad', () => pm.expect(data.favorito.oportunidad).to.eql(pm.collectionVariables.get('idOportunidadAcademica')));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos/{{idOportunidadAcademica}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos",
+                "{{idOportunidadAcademica}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "12.2 GET /favoritos - listar los mios (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo de favoritos', () => pm.expect(data.favoritos).to.be.an('array'));",
+                  "    pm.test('Incluye la oportunidad agregada', () => {",
+                  "        const ids = data.favoritos.map((f) => f.oportunidad && f.oportunidad._id);",
+                  "        pm.expect(ids).to.include(pm.collectionVariables.get('idOportunidadAcademica'));",
+                  "    });",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "12.3 DELETE /favoritos/:id - quitar (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Mensaje de eliminado', () => pm.expect(data.mensaje).to.eql('Eliminado de favoritos.'));",
+                  "})();"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favoritos/{{idOportunidadAcademica}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favoritos",
+                "{{idOportunidadAcademica}}"
+              ]
+            }
+          }
         }
       ]
     }
