@@ -19,14 +19,20 @@ fs.rmSync(destino, { recursive: true, force: true });
 fs.rmSync(zip, { force: true });
 fs.mkdirSync(destino, { recursive: true });
 
-// 2. Se genera el documento de Word con las capturas.
-try {
-  execFileSync('node', [path.join(__dirname, 'generarDocumento.js')], {
-    cwd: raizBackend,
-    stdio: 'inherit',
-  });
-} catch (e) {
-  console.error('  ! No se pudo generar el documento de Word:', e.message);
+// 2. Se genera el documento de Word con las capturas (si ya existe uno
+//    editado a mano, se respeta: solo se crea si no esta).
+const docFinal = path.join(evidencias, 'Documentacion-Bolivar-Aprende-y-Trabaja.docx');
+if (!fs.existsSync(docFinal)) {
+  try {
+    execFileSync('node', [path.join(__dirname, 'generarDocumento.js')], {
+      cwd: raizBackend,
+      stdio: 'inherit',
+    });
+  } catch (e) {
+    console.error('  ! No se pudo generar el documento de Word:', e.message);
+  }
+} else {
+  console.log('  = Documentacion-Bolivar-Aprende-y-Trabaja.docx (el que ya estaba)');
 }
 
 // 3. El APK.

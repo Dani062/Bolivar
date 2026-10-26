@@ -4,8 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
+// El documento se escribe en la carpeta de evidencias, al lado de las
+// capturas: asi se puede editar a mano y no se pierde al re-empaquetar.
 const carpeta = path.join(__dirname, '..', 'evidencias');
-const destino = path.join(__dirname, '..', 'entrega', 'Documentacion-Bolivar-Aprende-y-Trabaja.docx');
+const destino = path.join(carpeta, 'Documentacion-Bolivar-Aprende-y-Trabaja.docx');
 
 const T = (titulo, nivel = 1) => ({ tipo: 'titulo', texto: titulo, nivel });
 const P = (texto) => ({ tipo: 'parrafo', texto });
