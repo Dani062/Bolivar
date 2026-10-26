@@ -70,7 +70,12 @@ flutter build apk --release --dart-define=API_URL=https://bolivar-aprende-y-trab
 | `npm run semilla` | Carga oportunidades de ejemplo en MongoDB (`scripts/semilla.js`). Es idempotente: no duplica las que ya están. |
 | `npm run limpiar` | Borra los datos que dejan las pruebas automáticas (`scripts/limpiarPruebas.js`). No toca las cuentas reales ni las oportunidades publicadas desde la app. |
 | `npm run ver` | Imprime el contenido de todas las colecciones de Atlas (`scripts/verContenido.js`) |
-| `npm test` | Pruebas con Jest + Supertest (`tests/auth.test.js`) |
+| `npm run test:postman` | Corre la colección de Postman desde la terminal y muestra el resumen (`newman`) |
+| `npm run reporte:postman` | Lo mismo, pero además genera `postman/Reporte-pruebas-Postman.html` |
+| `npm run url` | Muestra la IP de la PC y el comando de `flutter run` que hay que copiar |
+| `npm run demo-apagada` | Apaga la API, comprueba que no se guarda nada y la vuelve a encender |
+| `npm run limpiar` | Borra los datos que dejan las pruebas automáticas |
+| `npm test` | Pruebas con Jest + Supertest (`tests/`) |
 
 ---
 
@@ -83,6 +88,7 @@ flutter build apk --release --dart-define=API_URL=https://bolivar-aprende-y-trab
 | `JWT_SECRET` | Secreto con el que se firman los tokens |
 | `JWT_EXPIRES_IN` | Vigencia del token (por defecto 7 días) |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Datos opcionales para `npm run seed` |
+| `RATE_LIMIT_MAX` | Intentos fallidos de login/registro permitidos en 15 minutos (100 por defecto) |
 
 > El `.env` contiene credenciales reales de Atlas: **no subirlo a ningún repositorio ni compartirlas**. `.gitignore` ya lo excluye.
 
@@ -201,6 +207,7 @@ Usa `express-validator`. La función `validar` corta la petición con 400 si hay
 | `reglasRegistro` | nombre y apellido obligatorios, email válido, contraseña ≥ 6, municipio dentro de la lista |
 | `reglasLogin` | email válido y contraseña obligatoria |
 | `reglasOportunidad` | título y descripción obligatorios; clase, categoría, tipo y municipio válidos si vienen; cupos entero ≥ 0 |
+| `reglasActualizacionOportunidad` | Igual que la anterior, pero solo valida los campos que llegan: permite cambiar un solo campo sin mandar la oportunidad completa |
 
 ### 5.10 `controllers/authController.js`
 
@@ -228,7 +235,7 @@ Usa `express-validator`. La función `validar` corta la petición con 400 si hay
 `soloCamposPermitidos()`, que descarta `_id`, `id`, `creadoPor`, `createdAt`,
 `updatedAt` y `__v`. Así el cliente no puede elegir el identificador de una
 oportunidad, cambiar su autor ni alterar las fechas de auditoría. El `PUT`
-también aplica `reglasOportunidad` (título y descripción obligatorios,
+también aplica `reglasActualizacionOportunidad` (solo valida los campos que llegan:
 clase/categoría/tipo/municipio dentro del catálogo, cupos entero >= 0).
 
 ### 5.12 `controllers/favoritoController.js`
@@ -258,7 +265,7 @@ clase/categoría/tipo/municipio dentro del catálogo, cupos entero >= 0).
 | GET | `/todas` | `protegerRuta` + `permitirRoles('administrador')` |
 | GET | `/:id` | pública |
 | POST | `/` | `protegerRuta` + `permitirRoles('administrador')` + `reglasOportunidad` |
-| PUT | `/:id` | `protegerRuta` + `permitirRoles('administrador')` + `reglasOportunidad` |
+| PUT | `/:id` | `protegerRuta` + `permitirRoles('administrador')` + `reglasActualizacionOportunidad` |
 | DELETE | `/:id` | `protegerRuta` + `permitirRoles('administrador')` |
 
 > `/todas` se declara **antes** de `/:id` porque Express compara las rutas en
