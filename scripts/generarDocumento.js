@@ -142,24 +142,22 @@ const contenido = [
       'Por eso, para abrirla y ver que funciona hay que tener la API encendida y el APK ' +
       'instalado. Son estos pasos:'
   ),
-  P('Paso 1. Instalar Node.js 18 o superior (https://nodejs.org).'),
-  P('Paso 2. Levantar la API. En una terminal, dentro de la carpeta backend:'),
-  L('cp .env.example .env        (en Windows: copy .env.example .env)'),
-  L('Editar el archivo .env y pegar el valor de MONGO_URI que viene en el archivo conexion-base-de-datos.txt del paquete.'),
-  L('npm install'),
-  L('npm run seed                (crea el administrador: admin@bolivar.com / admin123)'),
-  L('npm start                   (la API queda escuchando en el puerto 4000)'),
+  P('Paso 1. Instalar Node.js 18 o superior (https://nodejs.org). Es el único programa que hay que instalar.'),
   P(
-    'Paso 3. Comprobar que la API está viva. En el navegador debe abrir ' +
-      'http://localhost:4000/api/salud y mostrar: {"estado":"ok"}. (La primera vez tarda ' +
-      'unos 40 segundos, porque la base de datos está en Atlas y la conexión es por internet.)'
+    'Paso 2. Encender la API. En la carpeta del paquete, hacer doble clic en ' +
+      'INICIAR-API.bat. Ese archivo se encarga de todo: crea el archivo de ' +
+      'configuración con la dirección de la base de datos, instala las dependencias, ' +
+      'crea el administrador y enciende el servidor. La primera vez tarda un minuto.'
   ),
+  P(
+    'Al terminar, en esa misma ventana aparece el mensaje "API lista en ' +
+      'http://localhost:4000". Para detenerla se presiona Ctrl + C en esa ventana.'
+  ),
+  P('Paso 3. Comprobar que la API está viva. En el navegador debe abrir http://localhost:4000/api/salud y mostrar: {"estado":"ok"}.'),
   P('Paso 4. Abrir la aplicación. Hay dos opciones:'),
   L('Instalar el APK (app-release.apk) en un celular Android: se le pasa el archivo, en el celular se va a Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas, se activa la app desde donde se abre el archivo, y luego se abre el APK y se le da a Instalar.'),
   L('O bien abrir el proyecto en Android Studio (carpeta bolivar_aprende_y_trabaja) y darle al botón Run, que abre el emulador.'),
-  P(
-    'Paso 5. Iniciar sesión con el administrador: admin@bolivar.com y contraseña admin123.'
-  ),
+  P('Paso 5. Iniciar sesión con el administrador: admin@bolivar.com y contraseña admin123.'),
   P(
     'Paso 6. Comprobar que todo está conectado. En el menú lateral se entra a ' +
       '"Gestión de datos": debe aparecer el chip verde "API conectada" y el listado de ' +
@@ -326,7 +324,7 @@ const contenido = [
       ['Código de la aplicación (Android Studio, Flutter)', '(completar: enlace)'],
       ['Reporte de las pruebas de Postman', 'backend/postman/Reporte-pruebas-Postman.html'],
       ['Colección de Postman', 'backend/postman/Bolivar-Aprende-y-Trabaja.postman_collection.json'],
-      ['Dirección de MongoDB Atlas', 'archivo conexion-base-de-datos.txt del paquete'],
+      ['Dirección de MongoDB Atlas', 'archivo configurar.env del paquete'],
     ]
   ),
 
@@ -334,10 +332,11 @@ const contenido = [
   TABLA(
     ['Archivo', 'Qué es'],
     [
+      ['INICIAR-API.bat', 'Doble clic y la API queda encendida (crea la configuración, instala y arranca).'],
       ['app-release.apk', 'La aplicación compilada, lista para instalar.'],
       ['Documentacion-Bolivar-Aprende-y-Trabaja.docx', 'Este documento.'],
       ['INSTRUCCIONES.md', 'Resumen: cómo abrir la app y cómo instalar el APK.'],
-      ['conexion-base-de-datos.txt', 'El valor de MONGO_URI para levantar la API.'],
+      ['configurar.env', 'El archivo de configuración de la base de datos.'],
       ['evidencias/', 'Las 7 capturas de la aplicación.'],
       ['backend/', 'El código de la API, sus pruebas y la colección de Postman.'],
       ['api-publica.txt', 'Dirección de la API publicada (para llenar).'],

@@ -68,58 +68,48 @@ if (fs.existsSync(evidencias)) {
 
 // 6. Las instrucciones y los datos de conexion, al lado del paquete (no
 //    dentro del codigo del backend).
+// 6. Las instrucciones y los datos de conexion, al lado del paquete (no
+//    dentro del codigo del backend).
 const INSTRUCCIONES = `# Bolívar Aprende y Trabaja — Entrega
 
 Este paquete tiene todo lo necesario para abrir la app y probar la API.
 
-## Cómo abrir la app y comprobar que funciona
+## Cómo abrir la app (lo más fácil)
 
-La app no tiene base de datos propia: todo lo que muestra viene de la API.
-Por eso hay que tener la API encendida y el APK instalado.
+### 1. Encender la API: doble clic en INICIAR-API.bat
 
-### Paso 1. Instalar Node.js 18 o superior
-https://nodejs.org
+Ese archivo se encarga de todo: crea el archivo de configuración con la
+dirección de la base de datos, instala las dependencias, crea el
+administrador y enciende el servidor. La primera vez tarda un minuto.
 
-### Paso 2. Levantar la API
-En una terminal, dentro de la carpeta "backend":
+Cuando termine, en esa misma ventana va a aparecer:
 
-    copy .env.example .env
+    API lista en http://localhost:4000
 
-Editar el archivo .env y pegar el valor de MONGO_URI que viene en el archivo
-"conexion-base-de-datos.txt" de este paquete.
+Para detenerla: Ctrl + C en esa ventana (o ciérrala).
 
-    npm install
-    npm run seed      (crea el administrador: admin@bolivar.com / admin123)
-    npm start         (la API queda escuchando en el puerto 4000)
+### 2. Abrir la aplicación
 
-### Paso 3. Comprobar que la API está viva
-En el navegador debe abrir http://localhost:4000/api/salud y mostrar:
-
-    {"estado":"ok"}
-
-La primera vez tarda unos 40 segundos, porque la base de datos está en
-Atlas y la conexión es por internet.
-
-### Paso 4. Abrir la aplicación
-Opción 1 — Instalar el APK (app-release.apk) en un celular Android:
-  1. Pasarle el archivo al celular.
+Opción A — En un celular Android: instala el archivo app-release.apk.
+  1. Pásale el archivo al celular.
   2. En el celular: Ajustes > Aplicaciones > acceso especial > Instalar
-     aplicaciones desconocidas > activar la app desde donde se abre el archivo.
-  3. Abrir el archivo y darle a Instalar. Android pregunta si se permite la
-     instalación: se acepta.
+     aplicaciones desconocidas > activa la app desde donde se abre el archivo.
+  3. Abre el archivo y dale a Instalar.
 
-Opción 2 — Abrir el proyecto en Android Studio (carpeta
-"bolivar_aprende_y_trabaja") y darle al botón Run, que abre el emulador.
+Opción B — En el computador: abre el proyecto en Android Studio (carpeta
+  bolivar_aprende_y_trabaja) y dale al botón Run, que abre el emulador.
 
-### Paso 5. Iniciar sesión
+### 3. Iniciar sesión
+
     Correo:      admin@bolivar.com
     Contraseña:  admin123
 
-### Paso 6. Comprobar que todo está conectado
-Entrar en el menú lateral a "Gestión de datos": debe aparecer el chip verde
-"API conectada" y el listado de oportunidades guardadas en MongoDB. Si se
-crea una nueva, queda en la base de datos y aparece en el listado del inicio:
-ese es el ciclo completo de la API.
+### 4. Comprobar que todo está conectado
+
+Entra en el menú lateral a "Gestión de datos": debe aparecer el chip verde
+"API conectada" y el listado de oportunidades guardadas en MongoDB. Si creas
+una nueva, queda en la base de datos y aparece en el listado del inicio: ese
+es el ciclo completo de la API.
 
 Si la app se abre en un celular físico y sale el aviso "Sin conexión con el
 servidor", en la pantalla de inicio de sesión hay que tocar el botón
@@ -127,6 +117,12 @@ servidor", en la pantalla de inicio de sesión hay que tocar el botón
 ejemplo http://192.168.1.50:4000/api (el celular y el computador deben
 estar en la misma red). La app la recuerda. En el emulador de Android Studio
 no hace falta esto, porque ya apunta al localhost del computador.
+
+## Requisitos
+- Node.js 18 o superior: https://nodejs.org  (el archivo INICIAR-API.bat
+  te avisa si falta)
+- La API usa la base de datos en la nube (MongoDB Atlas), así que se
+  necesita internet.
 
 ## Probar la API con Postman
 1. Import > "Bolivar-Aprende-y-Trabaja.postman_collection.json"
@@ -141,33 +137,89 @@ Sin Postman, desde la terminal del backend:
   npm run reporte:postman   (ademas genera el reporte HTML)
 
 ## Que hay en el paquete
-- app-release.apk              La aplicacion.
-- Documentacion-...docx        La documentacion del trabajo.
-- INSTRUCCIONES.md             Este archivo.
-- conexion-base-de-datos.txt   La direccion de MongoDB para levantar la API.
-- evidencias/                  Las capturas de la app.
-- backend/                     El codigo de la API, sus pruebas y Postman.
-- api-publica.txt              Donde anotar la direccion de la API publicada.
+- INICIAR-API.bat        Doble clic y la API queda encendida.
+- app-release.apk         La aplicacion.
+- Documentacion-...docx   La documentacion del trabajo.
+- INSTRUCCIONES.md        Este archivo.
+- configurar.env          El archivo de configuracion de la base de datos.
+- evidencias/             Las capturas de la app.
+- backend/                El codigo de la API, sus pruebas y Postman.
+- api-publica.txt         Donde anotar la direccion de la API publicada.
+`;
+
+// El archivo .bat de arranque.
+// Sin acentos y sin BOM: el interprete de comandos de Windows lee el
+// archivo con la codificacion de la consola y el BOM lo rompe.
+const BAT = `@echo off
+title API - Bolivar Aprende y Trabaja
+cd /d "%~dp0backend"
+
+echo.
+echo ======================================================
+echo    Iniciando la API de Bolivar Aprende y Trabaja
+echo ======================================================
+echo.
+
+where node >nul 2>nul
+if errorlevel 1 (
+  echo [FALTA] No se encontro Node.js.
+  echo Descargalo de https://nodejs.org e instalalo, y despues
+  echo vuelve a hacer doble clic en este archivo.
+  echo.
+  pause
+  exit /b 1
+)
+
+if not exist ".env" (
+  if exist "..\\configurar.env" (
+    copy /y "..\\configurar.env" ".env" >nul
+    echo [1/3] Archivo de configuracion creado.
+  ) else (
+    echo [FALTA] No se encontro el archivo configurar.env
+    pause
+    exit /b 1
+  )
+) else (
+  echo [1/3] Configuracion lista.
+)
+
+if not exist "node_modules" (
+  echo [2/3] Instalando dependencias. La primera vez tarda un minuto...
+  call npm install
+  if errorlevel 1 (
+    echo [FALLO] No se pudieron instalar las dependencias.
+    pause
+    exit /b 1
+  )
+) else (
+  echo [2/3] Dependencias ya instaladas.
+)
+
+echo [3/3] Creando el administrador y encendiendo la API...
+call npm run seed
+echo.
+echo ======================================================
+echo    API lista en http://localhost:4000
+echo    Comprobala en: http://localhost:4000/api/salud
+echo    Para detenerla: Ctrl + C
+echo ======================================================
+echo.
+call npm start
+pause
 `;
 
 fs.writeFileSync(path.join(destino, 'INSTRUCCIONES.md'), INSTRUCCIONES, 'utf8');
 console.log('  + INSTRUCCIONES.md');
 
-// La direccion de MongoDB, para que el profesor no tenga que buscarla.
+fs.writeFileSync(path.join(destino, 'INICIAR-API.bat'), BAT.replace(/\n/g, '\r\n'), 'latin1');
+console.log('  + INICIAR-API.bat');
+
+// La direccion de MongoDB, en un .env listo para usar. Va al lado del
+// paquete (no dentro del codigo del backend) y INICIAR-API.bat lo copia.
 const archivoEnv = path.join(raizBackend, '.env');
 if (fs.existsSync(archivoEnv)) {
-  const linea = fs
-    .readFileSync(archivoEnv, 'utf8')
-    .split(/\r?\n/)
-    .find((l) => l.startsWith('MONGO_URI='));
-  fs.writeFileSync(
-    path.join(destino, 'conexion-base-de-datos.txt'),
-    'Pega este valor en el archivo backend/.env (linea MONGO_URI):\n\n' +
-      (linea ? linea : 'MONGO_URI=') +
-      '\n\nEl resto del .env se llena con los valores de .env.example.\n',
-    'utf8'
-  );
-  console.log('  + conexion-base-de-datos.txt');
+  fs.copyFileSync(archivoEnv, path.join(destino, 'configurar.env'));
+  console.log('  + configurar.env');
 }
 
 // 7. El lugar donde se anota la direccion publica de la API.
