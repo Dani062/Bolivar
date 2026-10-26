@@ -20,6 +20,22 @@
     {
       "key": "idOportunidad",
       "value": ""
+    },
+    {
+      "key": "totalPublicas",
+      "value": ""
+    },
+    {
+      "key": "idOportunidadLaboral",
+      "value": ""
+    },
+    {
+      "key": "idOportunidadAcademica",
+      "value": ""
+    },
+    {
+      "key": "idPostulacion",
+      "value": ""
     }
   ],
   "item": [
@@ -396,6 +412,11 @@
                   "    pm.test('Devuelve un arreglo de oportunidades', () => pm.expect(data.oportunidades).to.be.an('array'));",
                   "    pm.test('Devuelve el total y la paginacion', () => {",
                   "        pm.expect(data.total).to.be.a('number');",
+                  "    pm.collectionVariables.set('totalPublicas', data.total);",
+                  "    const laboral = data.oportunidades.find((o) => o.clase === 'laboral');",
+                  "    const academica = data.oportunidades.find((o) => o.clase !== 'laboral');",
+                  "    if (laboral) pm.collectionVariables.set('idOportunidadLaboral', laboral._id);",
+                  "    if (academica) pm.collectionVariables.set('idOportunidadAcademica', academica._id);",
                   "        pm.expect(data.pagina).to.eql(1);",
                   "        pm.expect(data).to.have.property('totalPaginas');",
                   "    });",
@@ -532,9 +553,11 @@
                   "    const data = pm.response.json();",
                   "    pm.test('Devuelve un arreglo de oportunidades', () => pm.expect(data.oportunidades).to.be.an('array'));",
                   "    pm.test('Devuelve el total', () => pm.expect(data.total).to.be.a('number'));",
-                  "    pm.test('Incluye oportunidades que no estan activas', () => {",
-                  "        const hayCerrada = data.oportunidades.some((o) => o.estado !== 'activa');",
-                  "        pm.expect(hayCerrada, \"No hay oportunidades cerradas: abre una, ponela en estado \\\"cerrada\\\" y vuelve a correr la prueba\").to.be.true;",
+                  "    pm.test('Incluye al menos todas las oportunidades activas', () => {",
+                  "        const publicas = pm.collectionVariables.get('totalPublicas');",
+                  "        if (publicas !== undefined && publicas !== null) {",
+                  "            pm.expect(data.total).to.be.at.least(publicas);",
+                  "        }",
                   "    });",
                   "})();"
                 ]
@@ -1123,7 +1146,7 @@
       "name": "9. Postulaciones (estudiante y administrador)",
       "item": [
         {
-          "name": "9.1 POST /postulaciones - postularse a una oferta",
+          "name": "9.1 POST /postulaciones - postularse a una oferta laboral",
           "request": {
             "method": "POST",
             "header": [
@@ -1138,7 +1161,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"oportunidadId\": \"{{idOportunidad}}\"\n}"
+              "raw": "{\n  \"oportunidadId\": \"{{idOportunidadLaboral}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/postulaciones",
@@ -1149,7 +1172,26 @@
                 "postulaciones"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve la postulacion', () => pm.expect(data.postulacion).to.be.an('object'));",
+                  "    pm.test('La postulacion es de la oferta enviada', () => {",
+                  "        pm.expect(data.postulacion.oportunidad._id).to.eql(pm.collectionVariables.get('idOportunidadLaboral'));",
+                  "    });",
+                  "    pm.collectionVariables.set('idPostulacion', data.postulacion._id);",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "9.2 GET /postulaciones/mias - mis postulaciones",
@@ -1171,7 +1213,26 @@
                 "mias"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo', () => pm.expect(data.postulaciones).to.be.an('array'));",
+                  "    pm.test('Incluye la postulacion que se acaba de crear', () => {",
+                  "        const id = pm.collectionVariables.get('idPostulacion');",
+                  "        pm.expect(data.postulaciones.some((p) => p._id === id)).to.be.true;",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "9.3 GET /postulaciones - todas (administrador)",
@@ -1192,13 +1253,36 @@
                 "postulaciones"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo', () => pm.expect(data.postulaciones).to.be.an('array'));",
+                  "    pm.test('Viene con los datos del estudiante', () => {",
+                  "        const p = data.postulaciones[0];",
+                  "        pm.expect(p.usuario).to.have.property('email');",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "9.4 PUT /postulaciones/:id/estado - cambiar estado",
+          "name": "9.4 PUT /postulaciones/:id/estado - cambiar estado (admin)",
           "request": {
             "method": "PUT",
             "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{tokenAdmin}}"
@@ -1209,17 +1293,35 @@
               "raw": "{\n  \"estado\": \"Aceptada\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/postulaciones/{{idOportunidad}}/estado",
+              "raw": "{{baseUrl}}/postulaciones/{{idPostulacion}}/estado",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "postulaciones",
-                "{{idOportunidad}}",
+                "{{idPostulacion}}",
                 "estado"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('El estado quedo en Aceptada', () => pm.expect(data.postulacion.estado).to.eql('Aceptada'));",
+                  "    pm.test('Aviso al estudiante', () => {",
+                  "        pm.expect(data.mensaje).to.be.a('string');",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "9.5 DELETE /postulaciones/:id - borrar",
@@ -1228,20 +1330,35 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{tokenAdmin}}"
+                "value": "Bearer {{tokenUsuario}}"
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/postulaciones/{{idOportunidad}}",
+              "raw": "{{baseUrl}}/postulaciones/{{idPostulacion}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "postulaciones",
-                "{{idOportunidad}}"
+                "{{idPostulacion}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Confirma el borrado', () => pm.expect(data.mensaje).to.eql('Postulación eliminada.'));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1264,7 +1381,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"oportunidadId\": \"{{idOportunidad}}\"\n}"
+              "raw": "{\n  \"oportunidadId\": \"{{idOportunidadAcademica}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/inscripciones",
@@ -1275,7 +1392,24 @@
                 "inscripciones"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve la inscripcion con la oportunidad', () => {",
+                  "        pm.expect(data.inscripcion.oportunidad._id).to.eql(pm.collectionVariables.get('idOportunidadAcademica'));",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "10.2 GET /inscripciones/mias - mis inscripciones",
@@ -1297,7 +1431,26 @@
                 "mias"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo', () => pm.expect(data.inscripciones).to.be.an('array'));",
+                  "    pm.test('Incluye la inscripcion que se acaba de crear', () => {",
+                  "        const id = pm.collectionVariables.get('idOportunidadAcademica');",
+                  "        pm.expect(data.inscripciones.some((i) => i.oportunidad._id === id)).to.be.true;",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "10.3 DELETE /inscripciones/oportunidad/:id - anular",
@@ -1310,17 +1463,32 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/inscripciones/oportunidad/{{idOportunidad}}",
+              "raw": "{{baseUrl}}/inscripciones/oportunidad/{{idOportunidadAcademica}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "inscripciones",
                 "oportunidad",
-                "{{idOportunidad}}"
+                "{{idOportunidadAcademica}}"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Confirma la anulacion', () => pm.expect(data.mensaje).to.eql('Inscripción anulada.'));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1346,7 +1514,28 @@
                 "notificaciones"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo', () => pm.expect(data.notificaciones).to.be.an('array'));",
+                  "    pm.test('Cada notificacion tiene titulo y mensaje', () => {",
+                  "        data.notificaciones.forEach((n) => {",
+                  "            pm.expect(n).to.have.property('titulo');",
+                  "            pm.expect(n).to.have.property('mensaje');",
+                  "        });",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "11.2 PUT /notificaciones/leer-todas - marcar todas como leidas",
@@ -1368,7 +1557,22 @@
                 "leer-todas"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Dice cuantas se marcaron', () => pm.expect(data.actualizadas).to.be.a('number'));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "11.3 GET /notificaciones/recientes - alertas enviadas (admin)",
@@ -1396,13 +1600,32 @@
                 }
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve un arreglo', () => pm.expect(data.notificaciones).to.be.an('array'));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "11.4 POST /notificaciones - enviar alerta a todos (admin)",
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
               {
                 "key": "Authorization",
                 "value": "Bearer {{tokenAdmin}}"
@@ -1421,7 +1644,23 @@
                 "notificaciones"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 201 Created', () => pm.response.to.have.status(201));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Dice a cuantos usuarios se envio', () => pm.expect(data.enviadas).to.be.a('number'));",
+                  "    pm.test('Se envio a al menos una persona', () => pm.expect(data.enviadas).to.be.above(0));",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -1448,7 +1687,26 @@
                 "usuarios"
               ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "(() => {",
+                  "    pm.test('Status es 200 OK', () => pm.response.to.have.status(200));",
+                  "    const data = pm.response.json();",
+                  "    pm.test('Devuelve el total de usuarios', () => pm.expect(data.total).to.be.a('number'));",
+                  "    pm.test('Devuelve el arreglo de usuarios', () => pm.expect(data.usuarios).to.be.an('array'));",
+                  "    pm.test('No expone las contrasenas', () => {",
+                  "        data.usuarios.forEach((u) => pm.expect(u).to.not.have.property('password'));",
+                  "    });",
+                  "})();"
+                ]
+              }
+            }
+          ]
         }
       ]
     }

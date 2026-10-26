@@ -12,7 +12,9 @@
     "demo-apagada": "node scripts/demoSinApi.js",
     "url": "node scripts/urlDelServidor.js",
     "ver": "node scripts/verContenido.js",
-    "test": "jest --detectOpenHandles --runInBand"
+    "test": "jest --detectOpenHandles --runInBand",
+    "test:postman": "newman run postman/Bolivar-Aprende-y-Trabaja.postman_collection.json -e postman/Bolivar-Entorno-Local.postman_environment.json",
+    "reporte:postman": "newman run postman/Bolivar-Aprende-y-Trabaja.postman_collection.json -e postman/Bolivar-Entorno-Local.postman_environment.json -r cli,html --reporter-html-export postman/Reporte-pruebas-Postman.html"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,6 +29,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "newman": "^6.2.3",
+    "newman-reporter-html": "^1.0.5",
     "nodemon": "^3.1.4",
     "supertest": "^7.0.0"
   },

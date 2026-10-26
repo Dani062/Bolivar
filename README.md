@@ -13,6 +13,56 @@ API REST para la app que centraliza oportunidades de educación, trabajo y empre
 - express-validator para validaciones
 - helmet, cors y express-rate-limit para seguridad básica
 
+## Cómo mostrar las pruebas con Postman
+
+La carpeta `postman` trae la colección con las 39 peticiones del CRUD, cada
+una con sus propias pruebas automáticas (`pm.test`). Es la forma más
+rápida de **demostrarle al profesor que la API funciona**.
+
+### Abrirla (5 pasos)
+
+1. Abre **Postman** (lo tienes instalado: hay un acceso directo en el
+   escritorio).
+2. Arriba a la izquierda, click en **Import** (o el ícono de una flecha
+   ↑).
+3. **Drag & drop** (o "Add Files") el archivo:
+   `postman\Bolivar-Aprende-y-Trabaja.postman_collection.json`
+4. Repite lo anterior con el entorno:
+   `postman\Bolivar-Entorno-Local.postman_environment.json`
+   (también hay uno llamado `Bolivar-Entorno-Publico` para cuando el
+   backend esté desplegado en internet).
+5. En la esquina superior derecha, el **selector de entorno**: elige
+   *"Bolivar Aprende y Trabaja - Local"*. Si no sale, hay que activarlo
+   desde el ícono del ojo (👁) de la barra lateral.
+
+### Correrla entera (para la demostración)
+
+1. Que el backend esté encendido (`npm start`) y que la variable `baseUrl`
+   apunte a `http://localhost:4000/api`.
+2. En la colección, click en el botón **▶ Run** (arriba a la derecha).
+3. Postman ejecuta las 39 peticiones en orden y al final te muestra el
+   resumen: cuántos tests pasaron, cuáles fallaron y cuánto tardó cada uno.
+4. En la parte de abajo puedes abrir la pestaña **Console** para ver el
+   detalle de cada petición.
+
+> Importante: la primera petición debe ser **`2.1 POST /auth/login`**
+> (con el administrador), porque ahí se guarda el token en la variable
+> `tokenAdmin` que usan las peticiones protegidas. Al correr la colección
+> completa, Postman respeta ese orden.
+
+### Si el profesor quiere verlas una por una
+
+Cada petición tiene su script de prueba. Click en la pestaña **Scripts** de
+la petición elegida y ahí está el código; se puede modificar y volver a
+correr. Por ejemplo, en `4.1 POST /oportunidades` está la prueba de que el
+servidor **no acepta que el cliente elija el `_id`** de la oportunidad.
+
+### Cambiar el servidor
+
+No hay que editar cada petición: la variable `baseUrl` del entorno es la que
+se usa en todas. Cambiándola pasas de tu PC al servidor publicado sin
+tocar nada más.
+
 ## Publicar el backend en internet (para que el APK funcione en cualquier red)
 
 Si entregás el APK, el profesor lo instala en su celular: **para que le

@@ -38,4 +38,18 @@ const reglasOportunidad = [
   validar
 ];
 
-module.exports = { reglasRegistro, reglasLogin, reglasOportunidad };
+// Al actualizar solo se valida lo que viene en el cuerpo: así se puede
+// cambiar un solo campo (por ejemplo el título) sin enviar la oportunidad
+// completa. Los campos que no se envían se quedan como estaban.
+const reglasActualizacionOportunidad = [
+  body('titulo').optional({ values: 'undefined' }).trim().notEmpty().withMessage('El título es obligatorio.'),
+  body('descripcion').optional({ values: 'undefined' }).trim().notEmpty().withMessage('La descripción es obligatoria.'),
+  body('clase').optional().isIn(['academica', 'laboral']).withMessage('Clase no válida.'),
+  body('categoria').optional().isIn(CATEGORIAS).withMessage('Categoría no válida.'),
+  body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válida.'),
+  body('municipio').optional().isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
+  body('cupos').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Cupos debe ser un número.'),
+  validar
+];
+
+module.exports = { reglasRegistro, reglasLogin, reglasOportunidad, reglasActualizacionOportunidad };
