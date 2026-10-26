@@ -136,7 +136,13 @@ const contenido = [
   T('4. Configuración y puesta en marcha', 1),
   P('Requisitos previos: Node.js 18 o superior, y para la aplicación, Flutter 3.13 o superior con Android Studio.'),
 
-  T('4.1 Levantar la API', 2),
+  T('4.1 Qué tiene que hacer el profesor para ver la app', 2),
+  P('La aplicación no tiene base de datos propia: necesita la API encendida. Hay tres formas de dejarlo funcionando:'),
+  L('Forma A — En la sustentación, en el salón: con el backend encendido en el equipo (npm start) y el celular del profesor en la misma red Wi-Fi. El APK ya viene con la dirección de ese equipo, así que la app se conecta sola y muestra el chip verde "API conectada". Si el equipo cambia de red, basta con tocar "Reintentar" en la app.'),
+  L('Forma B — En la casa del profesor, con el código: instala Node.js 18 o superior, descomprime el paquete, entra a la carpeta backend, copia .env.example como .env y pega el valor de MONGO_URI, y ejecuta npm install, npm run seed y npm start. Después instala el APK: en el emulador de Android Studio funciona directo, y en un celular físico toca el botón "Servidor: ..." de la pantalla de inicio de sesión y escribe la dirección de su computador (por ejemplo http://192.168.1.50:4000/api). La app la recuerda.'),
+  L('Forma C — Desde cualquier parte del mundo: publicar la API en internet (gratis) y recompilar el APK apuntando a esa dirección pública. El proceso está explicado en el README del proyecto.'),
+
+  T('4.2 Levantar la API', 2),
   P('1. Entrar a la carpeta del backend y instalar las dependencias:'),
   L('cd backend'),
   L('npm install'),
@@ -159,8 +165,9 @@ const contenido = [
   L('npm start          → http://localhost:4000'),
   P('4. Comprobar que la API está viva. En el navegador:'),
   L('http://localhost:4000/api/salud   →   {"estado":"ok"}'),
+  P('La primera vez el servidor tarda unos 40 segundos en arrancar, porque la base de datos está en Atlas y la conexión es por internet.'),
 
-  T('4.2 Correr la aplicación', 2),
+  T('4.3 Correr la aplicación', 2),
   P('La dirección del servidor se indica al compilar. En el emulador de Android Studio se usa 10.0.2.2 (así el emulador ve el localhost del equipo); en un celular real se usa la IP local del equipo:'),
   L('flutter pub get'),
   L('flutter run --dart-define=API_URL=http://192.168.101.6:4000/api'),
@@ -171,11 +178,17 @@ const contenido = [
       'emulador como en un teléfono real.'
   ),
 
-  T('4.3 Compilar el APK de entrega', 2),
+  T('4.4 Compilar el APK de entrega', 2),
   L('flutter build apk --release --dart-define=API_URL=http://192.168.101.6:4000/api'),
   P('El archivo queda en build/app/outputs/flutter-apk/app-release.apk y se instala a mano en el celular (Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas).'),
 
-  T('4.4 Pruebas', 2),
+  T('4.5 Instalar el APK en un celular', 2),
+  L('Se le pasa el archivo app-release.apk al celular (WhatsApp, Drive o cable).'),
+  L('En el celular: Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas → se activa la app desde donde se abre el archivo.'),
+  L('Se abre el archivo y se le da a Instalar. Android pregunta si se permite la instalación: se acepta.'),
+  P('El APK va firmado con la llave de depuración, que es lo normal en un proyecto académico: no hace falta ningún archivo de firma extra.'),
+
+  T('4.6 Pruebas', 2),
   TABLA(
     ['Qué', 'Comando', 'Resultado'],
     [
@@ -279,6 +292,7 @@ const contenido = [
       ['Código de la aplicación (Android Studio, Flutter)', '(completar: enlace)'],
       ['Reporte de las pruebas de Postman', 'backend/postman/Reporte-pruebas-Postman.html'],
       ['Colección de Postman', 'backend/postman/Bolivar-Aprende-y-Trabaja.postman_collection.json'],
+      ['Dirección de MongoDB Atlas', 'archivo conexion-base-de-datos.txt del paquete'],
     ]
   ),
 
@@ -288,7 +302,8 @@ const contenido = [
     [
       ['app-release.apk', 'La aplicación compilada, lista para instalar.'],
       ['Documentacion-Bolivar-Aprende-y-Trabaja.docx', 'Este documento.'],
-      ['INSTRUCCIONES.md', 'Cómo instalar la app, probarla y levantar la API.'],
+      ['INSTRUCCIONES.md', 'Resumen: las 3 formas de ver la app y cómo instalar el APK.'],
+      ['conexion-base-de-datos.txt', 'El valor de MONGO_URI para levantar la API.'],
       ['evidencias/', 'Las 7 capturas de la aplicación.'],
       ['backend/', 'El código de la API, sus pruebas y la colección de Postman.'],
       ['api-publica.txt', 'Dirección de la API publicada (para llenar).'],

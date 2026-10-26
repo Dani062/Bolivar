@@ -48,7 +48,7 @@ const copia = (origen, destinoNuevo) => {
   fs.mkdirSync(destinoNuevo, { recursive: true });
   for (const e of fs.readdirSync(origen, { withFileTypes: true })) {
     if (['node_modules', '.git', 'entrega'].includes(e.name)) continue;
-    if (e.name === '.env') continue; // el .env lleva credenciales: no se entrega
+    if (e.name === '.env') continue; // el .env lleva credenciales: no va con el codigo
     if (e.name.endsWith('.log')) continue;
     if (e.name === 'Bolivar-Aprende-y-Trabaja-ENTREGA.zip') continue;
     const o = path.join(origen, e.name);
@@ -66,11 +66,88 @@ if (fs.existsSync(evidencias)) {
   console.log('  + evidencias/ (capturas de la app)');
 }
 
-// 6. Las instrucciones al principio, con el nombre definitivo.
-const instrucciones = path.join(destino, 'backend', 'ENTREGA-INSTRUCCIONES.md');
-if (fs.existsSync(instrucciones)) {
-  fs.copyFileSync(instrucciones, path.join(destino, 'INSTRUCCIONES.md'));
-  fs.unlinkSync(instrucciones);
+// 6. Las instrucciones y los datos de conexion, al lado del paquete (no
+//    dentro del codigo del backend).
+const INSTRUCCIONES = `# Bolívar Aprende y Trabaja — Entrega
+
+Este paquete tiene todo lo necesario para ver la app funcionando y probar la API.
+
+## Las 3 formas de ver la app
+
+### A. En la sustentación, en el salón (lo más rápido)
+1. Con el backend encendido en el equipo (npm start).
+2. El profesor instala el APK en su celular.
+3. El celular debe estar en la misma red Wi-Fi que el equipo.
+
+El APK ya viene con la direccion de ese equipo, asi que la app se conecta
+sola y muestra el chip verde "API conectada". Si el equipo cambia de red,
+basta con tocar "Reintentar" en la app.
+
+### B. El profesor lo prueba en su casa, con el codigo
+1. Instala Node.js 18 o superior: https://nodejs.org
+2. Descomprime el paquete y entra a la carpeta "backend".
+3. Copia el archivo ".env.example" como ".env" y pega el valor de
+   MONGO_URI que aparece en el archivo "conexion-base-de-datos.txt".
+4. npm install
+5. npm run seed    (crea el administrador: admin@bolivar.com / admin123)
+6. npm start       (http://localhost:4000)
+7. Instala el APK en su celular y abrelo:
+   - En el emulador de Android Studio funciona directo, sin tocar nada.
+   - En un celular fisico, toca el boton "Servidor: ..." de la pantalla de
+     inicio de sesion y escribe la direccion de su computador, por ejemplo
+     http://192.168.1.50:4000/api. La app la recuerda.
+
+### C. Desde cualquier parte del mundo
+Publicar la API en internet (gratis) y recompilar el APK apuntando a esa
+direccion. Esta explicado en el README.md, en la seccion
+"Publicar el backend en internet".
+
+## Probar la API con Postman
+1. Import > "Bolivar-Aprende-y-Trabaja.postman_collection.json"
+2. Import > "Bolivar-Entorno-Local.postman_environment.json"
+3. Arriba a la derecha, elegir el entorno "Bolivar Aprende y Trabaja - Local"
+   (si no aparece, activarlo con el icono del ojo de la barra lateral).
+4. Con la API encendida, darle al boton "> Run" de la coleccion.
+5. Postman corre las 39 peticiones y al final muestra cuantas pruebas pasaron.
+
+Sin Postman, desde la terminal del backend:
+  npm run test:postman      (resumen en la consola)
+  npm run reporte:postman   (ademas genera el reporte HTML)
+
+## Instalar el APK
+1. Pasarle el archivo app-release.apk al celular.
+2. Ajustes > Aplicaciones > acceso especial > Instalar aplicaciones
+   desconocidas > activar la app desde donde se abre el archivo.
+3. Abrir el archivo e instalar.
+
+## Que hay en el paquete
+- app-release.apk              La aplicacion.
+- Documentacion-...docx        La documentacion del trabajo.
+- INSTRUCCIONES.md             Este archivo.
+- conexion-base-de-datos.txt   La direccion de MongoDB para levantar la API.
+- evidencias/                  Las capturas de la app.
+- backend/                     El codigo de la API, sus pruebas y Postman.
+- api-publica.txt              Donde anotar la direccion de la API publicada.
+`;
+
+fs.writeFileSync(path.join(destino, 'INSTRUCCIONES.md'), INSTRUCCIONES, 'utf8');
+console.log('  + INSTRUCCIONES.md');
+
+// La direccion de MongoDB, para que el profesor no tenga que buscarla.
+const archivoEnv = path.join(raizBackend, '.env');
+if (fs.existsSync(archivoEnv)) {
+  const linea = fs
+    .readFileSync(archivoEnv, 'utf8')
+    .split(/\r?\n/)
+    .find((l) => l.startsWith('MONGO_URI='));
+  fs.writeFileSync(
+    path.join(destino, 'conexion-base-de-datos.txt'),
+    'Pega este valor en el archivo backend/.env (linea MONGO_URI):\n\n' +
+      (linea ? linea : 'MONGO_URI=') +
+      '\n\nEl resto del .env se llena con los valores de .env.example.\n',
+    'utf8'
+  );
+  console.log('  + conexion-base-de-datos.txt');
 }
 
 // 7. El lugar donde se anota la direccion publica de la API.
