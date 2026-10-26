@@ -5,6 +5,41 @@ funcionando** y **probar la API** por su cuenta.
 
 ---
 
+## 0. Cómo puede ver la app (hay 3 formas, elige una)
+
+### Forma A — En la sustentación, en el salón (lo más rápido)
+
+1. Con el backend encendido en el equipo (`npm start`).
+2. El profesor instala el APK en su celular.
+3. **El celular del profesor debe estar en la misma red Wi-Fi que el equipo.**
+
+El APK ya viene con la dirección de ese equipo, así que la app se conecta
+sola y muestra el chip verde **"API conectada"**. Si el equipo cambia de red,
+basta con tocar **Reintentar** en la app.
+
+### Forma B — El profesor lo prueba en su casa, con el código
+
+1. Instala [Node.js 18 o superior](https://nodejs.org) en su computador.
+2. Descomprime el paquete y entra a la carpeta `backend`.
+3. Crea el archivo `.env` a partir de `.env.example` y pega la
+   `MONGO_URI` (ver la sección 4).
+4. `npm install` y `npm start`.
+5. Instala el APK en su celular, lo abre y toca el botón
+   **"Servidor: ..."** que está en la pantalla de inicio de sesión.
+6. Escribe la dirección de su computador, por ejemplo
+   `http://192.168.1.50:4000/api`, y le da **Guardar**.
+
+La app la recuerda, así que las demás veces entra directo. (El celular y el
+computador deben estar en la misma red.)
+
+### Forma C — Desde cualquier parte del mundo
+
+Publicar la API en internet (gratis) para que la app apunte a una
+dirección pública. Está explicado en el `README.md`, en la sección
+"Publicar el backend en internet".
+
+---
+
 ## 1. Qué hay en el paquete
 
 ```
