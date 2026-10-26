@@ -38,6 +38,10 @@
   "jest": {
     "//": "La base de datos está en Atlas (por internet), así que las pruebas necesitan más margen que los 5 segundos por defecto.",
     "testTimeout": 30000,
-    "hookTimeout": 30000
+    "hookTimeout": 30000,
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/entrega/"
+    ]
   }
 }
