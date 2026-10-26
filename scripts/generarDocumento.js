@@ -136,11 +136,45 @@ const contenido = [
   T('4. Configuración y puesta en marcha', 1),
   P('Requisitos previos: Node.js 18 o superior, y para la aplicación, Flutter 3.13 o superior con Android Studio.'),
 
-  T('4.1 Qué tiene que hacer el profesor para ver la app', 2),
-  P('La aplicación no tiene base de datos propia: necesita la API encendida. Hay tres formas de dejarlo funcionando:'),
-  L('Forma A — En la sustentación, en el salón: con el backend encendido en el equipo (npm start) y el celular del profesor en la misma red Wi-Fi. El APK ya viene con la dirección de ese equipo, así que la app se conecta sola y muestra el chip verde "API conectada". Si el equipo cambia de red, basta con tocar "Reintentar" en la app.'),
-  L('Forma B — En la casa del profesor, con el código: instala Node.js 18 o superior, descomprime el paquete, entra a la carpeta backend, copia .env.example como .env y pega el valor de MONGO_URI, y ejecuta npm install, npm run seed y npm start. Después instala el APK: en el emulador de Android Studio funciona directo, y en un celular físico toca el botón "Servidor: ..." de la pantalla de inicio de sesión y escribe la dirección de su computador (por ejemplo http://192.168.1.50:4000/api). La app la recuerda.'),
-  L('Forma C — Desde cualquier parte del mundo: publicar la API en internet (gratis) y recompilar el APK apuntando a esa dirección pública. El proceso está explicado en el README del proyecto.'),
+  T('4.1 Cómo abrir la app y comprobar que funciona', 2),
+  P(
+    'La aplicación no tiene base de datos propia: todo lo que muestra viene de la API. ' +
+      'Por eso, para abrirla y ver que funciona hay que tener la API encendida y el APK ' +
+      'instalado. Son estos pasos:'
+  ),
+  P('Paso 1. Instalar Node.js 18 o superior (https://nodejs.org).'),
+  P('Paso 2. Levantar la API. En una terminal, dentro de la carpeta backend:'),
+  L('cp .env.example .env        (en Windows: copy .env.example .env)'),
+  L('Editar el archivo .env y pegar el valor de MONGO_URI que viene en el archivo conexion-base-de-datos.txt del paquete.'),
+  L('npm install'),
+  L('npm run seed                (crea el administrador: admin@bolivar.com / admin123)'),
+  L('npm start                   (la API queda escuchando en el puerto 4000)'),
+  P(
+    'Paso 3. Comprobar que la API está viva. En el navegador debe abrir ' +
+      'http://localhost:4000/api/salud y mostrar: {"estado":"ok"}. (La primera vez tarda ' +
+      'unos 40 segundos, porque la base de datos está en Atlas y la conexión es por internet.)'
+  ),
+  P('Paso 4. Abrir la aplicación. Hay dos opciones:'),
+  L('Instalar el APK (app-release.apk) en un celular Android: se le pasa el archivo, en el celular se va a Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas, se activa la app desde donde se abre el archivo, y luego se abre el APK y se le da a Instalar.'),
+  L('O bien abrir el proyecto en Android Studio (carpeta bolivar_aprende_y_trabaja) y darle al botón Run, que abre el emulador.'),
+  P(
+    'Paso 5. Iniciar sesión con el administrador: admin@bolivar.com y contraseña admin123.'
+  ),
+  P(
+    'Paso 6. Comprobar que todo está conectado. En el menú lateral se entra a ' +
+      '"Gestión de datos": debe aparecer el chip verde "API conectada" y el listado de ' +
+      'oportunidades que están guardadas en MongoDB. Si se crea una nueva, esta queda en la ' +
+      'base de datos y aparece en el listado del inicio: ese es el ciclo completo de la API.'
+  ),
+  P(
+    'Si la aplicación se abre en un celular físico y sale el aviso "Sin conexión con el ' +
+      'servidor", es porque el celular tiene que buscar la API en la red local. En ese caso, ' +
+      'en la pantalla de inicio de sesión se toca el botón "Servidor: ..." y se escribe la ' +
+      'dirección del computador donde está la API, por ejemplo http://192.168.1.50:4000/api ' +
+      '(el celular y el computador deben estar en la misma red). La aplicación la recuerda ' +
+      'y las demás veces entra directo. En el emulador de Android Studio no hace falta nada ' +
+      'de esto, porque ya apunta al localhost del computador.'
+  ),
 
   T('4.2 Levantar la API', 2),
   P('1. Entrar a la carpeta del backend y instalar las dependencias:'),
@@ -302,7 +336,7 @@ const contenido = [
     [
       ['app-release.apk', 'La aplicación compilada, lista para instalar.'],
       ['Documentacion-Bolivar-Aprende-y-Trabaja.docx', 'Este documento.'],
-      ['INSTRUCCIONES.md', 'Resumen: las 3 formas de ver la app y cómo instalar el APK.'],
+      ['INSTRUCCIONES.md', 'Resumen: cómo abrir la app y cómo instalar el APK.'],
       ['conexion-base-de-datos.txt', 'El valor de MONGO_URI para levantar la API.'],
       ['evidencias/', 'Las 7 capturas de la aplicación.'],
       ['backend/', 'El código de la API, sus pruebas y la colección de Postman.'],

@@ -70,37 +70,63 @@ if (fs.existsSync(evidencias)) {
 //    dentro del codigo del backend).
 const INSTRUCCIONES = `# Bolívar Aprende y Trabaja — Entrega
 
-Este paquete tiene todo lo necesario para ver la app funcionando y probar la API.
+Este paquete tiene todo lo necesario para abrir la app y probar la API.
 
-## Las 3 formas de ver la app
+## Cómo abrir la app y comprobar que funciona
 
-### A. En la sustentación, en el salón (lo más rápido)
-1. Con el backend encendido en el equipo (npm start).
-2. El profesor instala el APK en su celular.
-3. El celular debe estar en la misma red Wi-Fi que el equipo.
+La app no tiene base de datos propia: todo lo que muestra viene de la API.
+Por eso hay que tener la API encendida y el APK instalado.
 
-El APK ya viene con la direccion de ese equipo, asi que la app se conecta
-sola y muestra el chip verde "API conectada". Si el equipo cambia de red,
-basta con tocar "Reintentar" en la app.
+### Paso 1. Instalar Node.js 18 o superior
+https://nodejs.org
 
-### B. El profesor lo prueba en su casa, con el codigo
-1. Instala Node.js 18 o superior: https://nodejs.org
-2. Descomprime el paquete y entra a la carpeta "backend".
-3. Copia el archivo ".env.example" como ".env" y pega el valor de
-   MONGO_URI que aparece en el archivo "conexion-base-de-datos.txt".
-4. npm install
-5. npm run seed    (crea el administrador: admin@bolivar.com / admin123)
-6. npm start       (http://localhost:4000)
-7. Instala el APK en su celular y abrelo:
-   - En el emulador de Android Studio funciona directo, sin tocar nada.
-   - En un celular fisico, toca el boton "Servidor: ..." de la pantalla de
-     inicio de sesion y escribe la direccion de su computador, por ejemplo
-     http://192.168.1.50:4000/api. La app la recuerda.
+### Paso 2. Levantar la API
+En una terminal, dentro de la carpeta "backend":
 
-### C. Desde cualquier parte del mundo
-Publicar la API en internet (gratis) y recompilar el APK apuntando a esa
-direccion. Esta explicado en el README.md, en la seccion
-"Publicar el backend en internet".
+    copy .env.example .env
+
+Editar el archivo .env y pegar el valor de MONGO_URI que viene en el archivo
+"conexion-base-de-datos.txt" de este paquete.
+
+    npm install
+    npm run seed      (crea el administrador: admin@bolivar.com / admin123)
+    npm start         (la API queda escuchando en el puerto 4000)
+
+### Paso 3. Comprobar que la API está viva
+En el navegador debe abrir http://localhost:4000/api/salud y mostrar:
+
+    {"estado":"ok"}
+
+La primera vez tarda unos 40 segundos, porque la base de datos está en
+Atlas y la conexión es por internet.
+
+### Paso 4. Abrir la aplicación
+Opción 1 — Instalar el APK (app-release.apk) en un celular Android:
+  1. Pasarle el archivo al celular.
+  2. En el celular: Ajustes > Aplicaciones > acceso especial > Instalar
+     aplicaciones desconocidas > activar la app desde donde se abre el archivo.
+  3. Abrir el archivo y darle a Instalar. Android pregunta si se permite la
+     instalación: se acepta.
+
+Opción 2 — Abrir el proyecto en Android Studio (carpeta
+"bolivar_aprende_y_trabaja") y darle al botón Run, que abre el emulador.
+
+### Paso 5. Iniciar sesión
+    Correo:      admin@bolivar.com
+    Contraseña:  admin123
+
+### Paso 6. Comprobar que todo está conectado
+Entrar en el menú lateral a "Gestión de datos": debe aparecer el chip verde
+"API conectada" y el listado de oportunidades guardadas en MongoDB. Si se
+crea una nueva, queda en la base de datos y aparece en el listado del inicio:
+ese es el ciclo completo de la API.
+
+Si la app se abre en un celular físico y sale el aviso "Sin conexión con el
+servidor", en la pantalla de inicio de sesión hay que tocar el botón
+"Servidor: ..." y escribir la dirección del computador donde está la API, por
+ejemplo http://192.168.1.50:4000/api (el celular y el computador deben
+estar en la misma red). La app la recuerda. En el emulador de Android Studio
+no hace falta esto, porque ya apunta al localhost del computador.
 
 ## Probar la API con Postman
 1. Import > "Bolivar-Aprende-y-Trabaja.postman_collection.json"
@@ -113,12 +139,6 @@ direccion. Esta explicado en el README.md, en la seccion
 Sin Postman, desde la terminal del backend:
   npm run test:postman      (resumen en la consola)
   npm run reporte:postman   (ademas genera el reporte HTML)
-
-## Instalar el APK
-1. Pasarle el archivo app-release.apk al celular.
-2. Ajustes > Aplicaciones > acceso especial > Instalar aplicaciones
-   desconocidas > activar la app desde donde se abre el archivo.
-3. Abrir el archivo e instalar.
 
 ## Que hay en el paquete
 - app-release.apk              La aplicacion.
