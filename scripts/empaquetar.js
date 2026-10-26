@@ -83,9 +83,9 @@ fs.writeFileSync(
 );
 console.log('  + api-publica.txt');
 
-// 8. Se comprime.
-fs.rmSync(zip, { force: true });
-try {
+// 8. Se comprime. A veces OneDrive bloquea el archivo un instante, asi que
+//    se reintenta un par de veces.
+const comprimir = () => {
   execFileSync(
     'powershell',
     [
@@ -95,8 +95,24 @@ try {
     ],
     { stdio: 'inherit' }
   );
+};
+
+let intentos = 0;
+while (intentos < 3) {
+  intentos++;
+  try {
+    fs.rmSync(zip, { force: true });
+    comprimir();
+    if (fs.existsSync(zip) && fs.statSync(zip).size > 0) break;
+    console.log(`  ... el archivo salio vacio, se reintenta (${intentos})`);
+  } catch (e) {
+    console.log(`  ... no se pudo comprimir todavia (${intentos}), se reintenta`);
+  }
+}
+
+if (fs.existsSync(zip)) {
   console.log(`\nPaquete listo: ${zip}`);
   console.log(`Tamano: ${(fs.statSync(zip).size / 1024 / 1024).toFixed(1)} MB`);
-} catch (e) {
-  console.error('No se pudo comprimir:', e.message);
+} else {
+  console.error('\nNo se pudo crear el paquete. Intenta de nuevo: npm run empaquetar');
 }
