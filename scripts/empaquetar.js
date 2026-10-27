@@ -6,12 +6,15 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const raizBackend = path.join(__dirname, '..');
+// Lo de la entrega (el ZIP, el documento y las capturas) vive FUERA del
+// codigo, en la carpeta hermana ENTREGA-Bolivar.
+const raizEntrega = path.join(raizBackend, '..', 'ENTREGA-Bolivar');
 const raizApp = 'C:/Users/Daniela Paez/AndroidStudioProjects/bolivar_aprende_y_trabaja';
 const apk = path.join(raizApp, 'build', 'app', 'outputs', 'flutter-apk', 'app-release.apk');
-const evidencias = path.join(raizBackend, 'evidencias');
+const evidencias = path.join(raizEntrega, 'evidencias');
 
-const destino = path.join(raizBackend, 'entrega');
-const zip = path.join(raizBackend, 'Bolivar-Aprende-y-Trabaja-ENTREGA.zip');
+const destino = path.join(raizEntrega, 'entrega');
+const zip = path.join(raizEntrega, 'Bolivar-Aprende-y-Trabaja-ENTREGA.zip');
 
 // 1. Se limpia la carpeta de trabajo (las capturas viven en otra carpeta) y
 //    el ZIP anterior, para que no se meta dentro de si mismo.
@@ -66,86 +69,11 @@ if (fs.existsSync(evidencias)) {
   console.log('  + evidencias/ (capturas de la app)');
 }
 
+// 6. El archivo de arranque y los datos de conexion van al lado del
+//    paquete (no dentro del codigo del backend).
 // 6. Las instrucciones y los datos de conexion, al lado del paquete (no
 //    dentro del codigo del backend).
-// 6. Las instrucciones y los datos de conexion, al lado del paquete (no
-//    dentro del codigo del backend).
-const INSTRUCCIONES = `# Bolívar Aprende y Trabaja — Entrega
 
-Este paquete tiene todo lo necesario para abrir la app y probar la API.
-
-## Cómo abrir la app (lo más fácil)
-
-### 1. Encender la API: doble clic en INICIAR-API.bat
-
-Ese archivo se encarga de todo: crea el archivo de configuración con la
-dirección de la base de datos, instala las dependencias, crea el
-administrador y enciende el servidor. La primera vez tarda un minuto.
-
-Cuando termine, en esa misma ventana va a aparecer:
-
-    API lista en http://localhost:4000
-
-Para detenerla: Ctrl + C en esa ventana (o ciérrala).
-
-### 2. Abrir la aplicación
-
-Opción A — En un celular Android: instala el archivo app-release.apk.
-  1. Pásale el archivo al celular.
-  2. En el celular: Ajustes > Aplicaciones > acceso especial > Instalar
-     aplicaciones desconocidas > activa la app desde donde se abre el archivo.
-  3. Abre el archivo y dale a Instalar.
-
-Opción B — En el computador: abre el proyecto en Android Studio (carpeta
-  bolivar_aprende_y_trabaja) y dale al botón Run, que abre el emulador.
-
-### 3. Iniciar sesión
-
-    Correo:      admin@bolivar.com
-    Contraseña:  admin123
-
-### 4. Comprobar que todo está conectado
-
-Entra en el menú lateral a "Gestión de datos": debe aparecer el chip verde
-"API conectada" y el listado de oportunidades guardadas en MongoDB. Si creas
-una nueva, queda en la base de datos y aparece en el listado del inicio: ese
-es el ciclo completo de la API.
-
-Si la app se abre en un celular físico y sale el aviso "Sin conexión con el
-servidor", en la pantalla de inicio de sesión hay que tocar el botón
-"Servidor: ..." y escribir la dirección del computador donde está la API, por
-ejemplo http://192.168.1.50:4000/api (el celular y el computador deben
-estar en la misma red). La app la recuerda. En el emulador de Android Studio
-no hace falta esto, porque ya apunta al localhost del computador.
-
-## Requisitos
-- Node.js 18 o superior: https://nodejs.org  (el archivo INICIAR-API.bat
-  te avisa si falta)
-- La API usa la base de datos en la nube (MongoDB Atlas), así que se
-  necesita internet.
-
-## Probar la API con Postman
-1. Import > "Bolivar-Aprende-y-Trabaja.postman_collection.json"
-2. Import > "Bolivar-Entorno-Local.postman_environment.json"
-3. Arriba a la derecha, elegir el entorno "Bolivar Aprende y Trabaja - Local"
-   (si no aparece, activarlo con el icono del ojo de la barra lateral).
-4. Con la API encendida, darle al boton "> Run" de la coleccion.
-5. Postman corre las 39 peticiones y al final muestra cuantas pruebas pasaron.
-
-Sin Postman, desde la terminal del backend:
-  npm run test:postman      (resumen en la consola)
-  npm run reporte:postman   (ademas genera el reporte HTML)
-
-## Que hay en el paquete
-- INICIAR-API.bat        Doble clic y la API queda encendida.
-- app-release.apk         La aplicacion.
-- Documentacion-...docx   La documentacion del trabajo.
-- INSTRUCCIONES.md        Este archivo.
-- configurar.env          El archivo de configuracion de la base de datos.
-- evidencias/             Las capturas de la app.
-- backend/                El codigo de la API, sus pruebas y Postman.
-- api-publica.txt         Donde anotar la direccion de la API publicada.
-`;
 
 // El archivo .bat de arranque.
 // Sin acentos y sin BOM: el interprete de comandos de Windows lee el
@@ -208,8 +136,6 @@ call npm start
 pause
 `;
 
-fs.writeFileSync(path.join(destino, 'INSTRUCCIONES.md'), INSTRUCCIONES, 'utf8');
-console.log('  + INSTRUCCIONES.md');
 
 fs.writeFileSync(path.join(destino, 'INICIAR-API.bat'), BAT.replace(/\n/g, '\r\n'), 'latin1');
 console.log('  + INICIAR-API.bat');

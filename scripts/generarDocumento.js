@@ -7,8 +7,11 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-const carpeta = path.join(__dirname, '..', 'evidencias');
-const destino = path.join(carpeta, 'Documentacion-Bolivar-Aprende-y-Trabaja.docx');
+// El documento y las capturas viven FUERA del codigo, en la carpeta hermana
+// ENTREGA-Bolivar, para que el backend solo tenga codigo.
+const carpetaEntrega = path.join(__dirname, '..', '..', 'ENTREGA-Bolivar');
+const carpeta = path.join(carpetaEntrega, 'evidencias');
+const destino = path.join(carpetaEntrega, 'Documentacion-Bolivar-Aprende-y-Trabaja.docx');
 
 const T = (texto, nivel = 1) => ({ tipo: 'titulo', texto, nivel });
 const P = (texto) => ({ tipo: 'parrafo', texto });
@@ -134,7 +137,18 @@ const contenido = [
 
   // ---------------- 4. CONFIGURACIÓN ----------------
   T('4. Configuración y puesta en marcha', 1),
-  P('Requisitos previos: Node.js 18 o superior, y para la aplicación, Flutter 3.13 o superior con Android Studio.'),
+  P(
+    'Para poder abrir la aplicación hay que tener la API encendida. Eso se hace ' +
+      'con un solo archivo (sección 4.1). En la 4.2 están los mismos pasos ' +
+      'escritos uno por uno, por si se prefiere trabajar desde la terminal. ' +
+      'La 4.3 y la 4.4 son para quien va a recompilar la aplicación, y la 4.5 ' +
+      'para correr las pruebas.'
+  ),
+  P(
+    'Requisitos: Node.js 18 o superior (para la API) y un celular Android o el ' +
+      'emulador de Android Studio (para la aplicación). Flutter y Android Studio ' +
+      'solamente hacen falta si se va a recompilar la app o a mirar su código.'
+  ),
 
   T('4.1 Cómo abrir la app y comprobar que funciona', 2),
   P(
@@ -155,7 +169,7 @@ const contenido = [
   ),
   P('Paso 3. Comprobar que la API está viva. En el navegador debe abrir http://localhost:4000/api/salud y mostrar: {"estado":"ok"}.'),
   P('Paso 4. Abrir la aplicación. Hay dos opciones:'),
-  L('Instalar el APK (app-release.apk) en un celular Android: se le pasa el archivo, en el celular se va a Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas, se activa la app desde donde se abre el archivo, y luego se abre el APK y se le da a Instalar.'),
+  L('Instalar el APK (app-release.apk) en un celular Android: se le pasa el archivo, en el celular se va a Ajustes → Aplicaciones → acceso especial → Instalar aplicaciones desconocidas, se activa la app desde donde se abre el archivo, y luego se abre el APK y se le da a Instalar (los pasos están en la sección 4.5).'),
   L('O bien abrir el proyecto en Android Studio (carpeta bolivar_aprende_y_trabaja) y darle al botón Run, que abre el emulador.'),
   P('Paso 5. Iniciar sesión con el administrador: admin@bolivar.com y contraseña admin123.'),
   P(
@@ -174,12 +188,17 @@ const contenido = [
       'de esto, porque ya apunta al localhost del computador.'
   ),
 
-  T('4.2 Levantar la API', 2),
+  T('4.2 Levantar la API desde la terminal', 2),
+  P(
+    'Estos son exactamente los mismos pasos que hace el archivo INICIAR-API.bat ' +
+      'de la sección 4.1, escritos uno por uno. Si se usó el archivo, esto ya ' +
+      'está hecho y se puede saltar.'
+  ),
   P('1. Entrar a la carpeta del backend y instalar las dependencias:'),
   L('cd backend'),
   L('npm install'),
-  P('2. Crear el archivo de configuración. Se copia el ejemplo y se completan los valores:'),
-  L('cp .env.example .env'),
+  P('2. Crear el archivo de configuración. Se copia el ejemplo y se completa el valor de MONGO_URI (el mismo que viene en el archivo configurar.env del paquete):'),
+  L('cp .env.example .env          (en Windows: copy .env.example .env)'),
   TABLA(
     ['Variable', 'Para qué sirve'],
     [
@@ -195,8 +214,7 @@ const contenido = [
   L('npm run seed       → crea admin@bolivar.com / admin123'),
   L('npm run semilla    → carga 7 oportunidades de ejemplo'),
   L('npm start          → http://localhost:4000'),
-  P('4. Comprobar que la API está viva. En el navegador:'),
-  L('http://localhost:4000/api/salud   →   {"estado":"ok"}'),
+  P('Para comprobar que la API está viva se abre http://localhost:4000/api/salud (ver el paso 3 de la sección 4.1).'),
   P('La primera vez el servidor tarda unos 40 segundos en arrancar, porque la base de datos está en Atlas y la conexión es por internet.'),
 
   T('4.3 Correr la aplicación', 2),
