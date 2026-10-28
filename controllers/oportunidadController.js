@@ -1,4 +1,15 @@
 const Oportunidad = require('../models/Oportunidad');
+const Favorito = require('../models/Favorito');
+const Postulacion = require('../models/Postulacion');
+const Inscripcion = require('../models/Inscripcion');
+
+// Convierte pagina/limite del query en números seguros (evita saltos negativos
+// o límites gigantes que harían fallar la consulta).
+const paginacion = (pagina, limite, limitePorDefecto) => {
+  const p = Math.max(parseInt(pagina, 10) || 1, 1);
+  const l = Math.min(Math.max(parseInt(limite, 10) || limitePorDefecto, 1), 100);
+  return { p, l, salto: (p - 1) * l };
+};
 
 // Campos que el cliente NO puede escribir: los controla el servidor.
 // Sin esta lista un POST podría elegir el _id y un PUT podría cambiar el
@@ -18,7 +29,8 @@ const soloCamposPermitidos = (cuerpo) => {
 // Listado público: solo las oportunidades activas.
 const listarOportunidades = async (req, res, next) => {
   try {
-    const { municipio, categoria, tipo, clase, pagina = 1, limite = 10 } = req.query;
+    const { municipio, categoria, tipo, clase, pagina, limite } = req.query;
+    const { p, l, salto } = paginacion(pagina, limite, 10);
 
     const filtro = { estado: 'activa' };
 
@@ -34,20 +46,18 @@ const listarOportunidades = async (req, res, next) => {
     if (tipo) filtro.tipo = tipo;
     if (clase) filtro.clase = clase;
 
-    const salto = (Number(pagina) - 1) * Number(limite);
-
     const [oportunidades, total] = await Promise.all([
       Oportunidad.find(filtro)
         .sort({ createdAt: -1 })
         .skip(salto)
-        .limit(Number(limite)),
+        .limit(l),
       Oportunidad.countDocuments(filtro)
     ]);
 
     res.json({
       total,
-      pagina: Number(pagina),
-      totalPaginas: Math.ceil(total / limite),
+      pagina: p,
+      totalPaginas: Math.ceil(total / l),
       oportunidades
     });
   } catch (error) {
@@ -60,7 +70,8 @@ const listarOportunidades = async (req, res, next) => {
 // otro modo el administrador no podría volver a editar desde la app.
 const listarTodasOportunidades = async (req, res, next) => {
   try {
-    const { municipio, categoria, tipo, clase, pagina = 1, limite = 100 } = req.query;
+    const { municipio, categoria, tipo, clase, pagina, limite } = req.query;
+    const { p, l, salto } = paginacion(pagina, limite, 100);
 
     const filtro = {};
 
@@ -71,20 +82,18 @@ const listarTodasOportunidades = async (req, res, next) => {
     if (tipo) filtro.tipo = tipo;
     if (clase) filtro.clase = clase;
 
-    const salto = (Number(pagina) - 1) * Number(limite);
-
     const [oportunidades, total] = await Promise.all([
       Oportunidad.find(filtro)
         .sort({ createdAt: -1 })
         .skip(salto)
-        .limit(Number(limite)),
+        .limit(l),
       Oportunidad.countDocuments(filtro)
     ]);
 
     res.json({
       total,
-      pagina: Number(pagina),
-      totalPaginas: Math.ceil(total / limite),
+      pagina: p,
+      totalPaginas: Math.ceil(total / l),
       oportunidades
     });
   } catch (error) {
@@ -142,6 +151,12 @@ const eliminarOportunidad = async (req, res, next) => {
     if (!oportunidad) {
       return res.status(404).json({ mensaje: 'Oportunidad no encontrada.' });
     }
+    // Se borra lo que dependía de ella para no dejar registros huérfanos.
+    await Promise.all([
+      Favorito.deleteMany({ oportunidad: oportunidad._id }),
+      Postulacion.deleteMany({ oportunidad: oportunidad._id }),
+      Inscripcion.deleteMany({ oportunidad: oportunidad._id })
+    ]);
     res.json({ mensaje: 'Oportunidad eliminada.' });
   } catch (error) {
     next(error);

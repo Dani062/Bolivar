@@ -74,6 +74,10 @@ const PORT = process.env.PORT || 4000;
 // se devuelve la app sin abrir el puerto, para que las pruebas puedan correr
 // con el servidor ya levantado.
 if (require.main === module) {
+  if (!process.env.JWT_SECRET) {
+    console.error('❌ Falta JWT_SECRET en el archivo .env (copia .env.example como .env).');
+    process.exit(1);
+  }
   conectarDB().then(() => {
     app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
   });

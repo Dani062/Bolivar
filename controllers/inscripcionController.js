@@ -60,7 +60,8 @@ const mias = async (req, res, next) => {
       .populate('oportunidad')
       .sort({ createdAt: -1 });
 
-    res.json({ inscripciones });
+    // Si la oportunidad se borró, no se devuelve el registro vacío.
+    res.json({ inscripciones: inscripciones.filter((x) => x.oportunidad) });
   } catch (error) {
     next(error);
   }

@@ -13,7 +13,7 @@ const validar = (req, res, next) => {
 const reglasRegistro = [
   body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio.'),
   body('apellido').trim().notEmpty().withMessage('El apellido es obligatorio.'),
-  body('email').isEmail().withMessage('El correo no es válido.'),
+  body('email').trim().toLowerCase().isEmail().withMessage('El correo no es válido.'),
   body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres.'),
   body('municipio')
     .isIn(MUNICIPIOS.filter((m) => m !== 'Todo Bolívar'))
@@ -22,7 +22,7 @@ const reglasRegistro = [
 ];
 
 const reglasLogin = [
-  body('email').isEmail().withMessage('El correo no es válido.'),
+  body('email').trim().toLowerCase().isEmail().withMessage('El correo no es válido.'),
   body('password').notEmpty().withMessage('La contraseña es obligatoria.'),
   validar
 ];
@@ -46,7 +46,7 @@ const reglasActualizacionOportunidad = [
   body('descripcion').optional({ values: 'undefined' }).trim().notEmpty().withMessage('La descripción es obligatoria.'),
   body('clase').optional().isIn(['academica', 'laboral']).withMessage('Clase no válida.'),
   body('categoria').optional().isIn(CATEGORIAS).withMessage('Categoría no válida.'),
-  body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válida.'),
+  body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válido.'),
   body('municipio').optional().isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
   body('cupos').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Cupos debe ser un número.'),
   validar

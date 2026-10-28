@@ -62,7 +62,8 @@ const mias = async (req, res, next) => {
       .populate('oportunidad')
       .sort({ createdAt: -1 });
 
-    res.json({ postulaciones });
+    // Si la oportunidad se borró, no se devuelve el registro vacío.
+    res.json({ postulaciones: postulaciones.filter((x) => x.oportunidad) });
   } catch (error) {
     next(error);
   }
@@ -76,7 +77,8 @@ const todas = async (req, res, next) => {
       .populate('oportunidad')
       .sort({ createdAt: -1 });
 
-    res.json({ postulaciones });
+    // Si la oportunidad se borró, no se devuelve el registro vacío.
+    res.json({ postulaciones: postulaciones.filter((x) => x.oportunidad) });
   } catch (error) {
     next(error);
   }

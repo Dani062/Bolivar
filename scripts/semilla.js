@@ -55,7 +55,7 @@ const OPORTUNIDADES = [
     cupos: 1,
     empresa: 'Agencia Creativa Heroica',
     cargo: 'Asistente de Marketing Digital',
-    salario: r'$1.5M - $1.8M COP',
+    salario: '$1.5M - $1.8M COP',
     ubicacion: 'Cartagena de Indias',
     contacto: 'contacto@agenciaheroica.co'
   },
@@ -70,7 +70,7 @@ const OPORTUNIDADES = [
     cupos: 1,
     empresa: 'Bolívar Tech Solutions',
     cargo: 'Desarrollo Frontend Junior',
-    salario: r'$2.2M - $2.6M COP',
+    salario: '$2.2M - $2.6M COP',
     ubicacion: 'Turbaco (Híbrido)',
     contacto: 'empleo@bolivartech.co'
   },
@@ -85,7 +85,7 @@ const OPORTUNIDADES = [
     cupos: 1,
     empresa: 'Cámara de Comercio',
     cargo: 'Soporte Técnico',
-    salario: r'$1.3M COP',
+    salario: '$1.3M COP',
     ubicacion: 'Cartagena de Indias',
     contacto: 'rrhh@camaracartagena.co'
   },
@@ -100,7 +100,7 @@ const OPORTUNIDADES = [
     cupos: 1,
     empresa: 'Fundación Bolívar',
     cargo: 'Gestor de Proyectos Sociales',
-    salario: r'$1.8M COP',
+    salario: '$1.8M COP',
     ubicacion: 'Arjona',
     contacto: 'proyectos@fundacionbolivar.org'
   }

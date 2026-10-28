@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const conectarDB = async () => {
+  if (!process.env.MONGO_URI) {
+    console.error('❌ Falta MONGO_URI en el archivo .env (copia .env.example como .env).');
+    process.exit(1);
+  }
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ Conectado a MongoDB');
