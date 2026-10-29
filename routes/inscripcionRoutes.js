@@ -9,8 +9,7 @@ router.use(protegerRuta);
 router.post('/', crear);
 router.get('/mias', mias);
 
-// Anular por oportunidad: va antes de '/:id' para que Express no lo confunda
-// con un identificador de inscripción.
+// Va antes de '/:id' para que Express no lo confunda con un id.
 router.delete('/oportunidad/:oportunidadId', anularPorOportunidad);
 
 router.delete('/:id', eliminar);

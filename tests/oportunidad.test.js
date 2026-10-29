@@ -1,11 +1,5 @@
-/**
- * Pruebas del CRUD de oportunidades (GET, POST, PUT y DELETE).
- *
- * Usan la base de datos del .env. La oportunidad de prueba se crea y se
- * borra al final, así que no deja basura.
- *
- * Correr con: npm test
- */
+// Pruebas del CRUD de oportunidades (GET, POST, PUT y DELETE).
+// La oportunidad de prueba se borra al final. Correr con: npm test
 require('dotenv').config();
 const mongoose = require('mongoose');
 const request = require('supertest');

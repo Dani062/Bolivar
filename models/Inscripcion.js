@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Inscripción de un usuario a una oportunidad académica (curso, beca,
-// taller o evento).
+// Inscripción de un usuario a una oportunidad académica.
 const inscripcionSchema = new mongoose.Schema(
   {
     usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true, index: true },

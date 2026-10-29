@@ -14,8 +14,7 @@ const { reglasOportunidad, reglasActualizacionOportunidad } = require('../utils/
 // Rutas públicas: cualquiera puede ver oportunidades sin necesidad de login
 router.get('/', listarOportunidades);
 
-// Listado completo para el administrador (incluye cerradas y pendientes).
-// Va antes de '/:id' porque Express compara en el orden en que se declaran.
+// Solo administrador. Va antes de '/:id' para que no se confunda con un id.
 router.get('/todas', protegerRuta, permitirRoles('administrador'), listarTodasOportunidades);
 
 router.get('/:id', obtenerOportunidad);

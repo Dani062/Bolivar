@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario');
 
-// Verifica que venga un token válido en el header Authorization: Bearer <token>
+// Verifica el token del header Authorization: Bearer <token>
 const protegerRuta = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

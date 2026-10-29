@@ -1,8 +1,7 @@
 const Notificacion = require('../models/Notificacion');
 const Usuario = require('../models/Usuario');
 
-// GET /api/notificaciones
-// Las notificaciones del usuario que tiene la sesión iniciada.
+// GET /api/notificaciones (las del usuario con sesión iniciada)
 const listar = async (req, res, next) => {
   try {
     const notificaciones = await Notificacion.find({ usuario: req.usuario._id })
@@ -14,9 +13,7 @@ const listar = async (req, res, next) => {
   }
 };
 
-// GET /api/notificaciones/recientes  (solo administrador)
-// Historial de las últimas alertas enviadas, para que el administrador vea
-// lo que ya publicó.
+// GET /api/notificaciones/recientes (solo administrador)
 const recientes = async (req, res, next) => {
   try {
     const limite = Math.min(Number(req.query.limite) || 10, 100);
@@ -63,9 +60,8 @@ const marcarTodasLeidas = async (req, res, next) => {
   }
 };
 
-// POST /api/notificaciones  (solo administrador)
-// body: { titulo, mensaje, icono, usuarioId? }
-// Si no viene usuarioId la alerta se envía a todos los usuarios activos.
+// POST /api/notificaciones (solo administrador)
+// Sin usuarioId, la alerta se envía a todos los usuarios activos.
 const crear = async (req, res, next) => {
   try {
     const { titulo, mensaje, icono = 'notificacion', usuarioId } = req.body;
@@ -106,9 +102,7 @@ const crear = async (req, res, next) => {
   }
 };
 
-// DELETE /api/notificaciones/:id
-// El usuario borra las suyas; el administrador puede borrar cualquiera
-// (las alertas que él mandó viven en la cuenta de cada usuario).
+// DELETE /api/notificaciones/:id (el dueño o el administrador)
 const eliminar = async (req, res, next) => {
   try {
     const filtro = { _id: req.params.id };

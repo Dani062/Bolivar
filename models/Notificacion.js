@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Aviso para un usuario de la app (postulación enviada, cambio de estado,
-// alerta general del administrador...).
+// Aviso para un usuario de la app.
 const notificacionSchema = new mongoose.Schema(
   {
     usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true, index: true },

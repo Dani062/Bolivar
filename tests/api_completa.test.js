@@ -1,10 +1,5 @@
-/**
- * Pruebas de usuarios, postulaciones, inscripciones y notificaciones.
- *
- * Usan la base de datos del .env. Todo lo que se crea se borra al final.
- *
- * Correr con: npm test
- */
+// Pruebas de usuarios, postulaciones, inscripciones y notificaciones.
+// Todo lo que se crea se borra al final. Correr con: npm test
 require('dotenv').config();
 const mongoose = require('mongoose');
 const request = require('supertest');
@@ -21,8 +16,7 @@ const CLAVE_ADMIN = process.env.ADMIN_PASSWORD || 'admin123';
 
 const TITULO_PRUEBA = 'Oportunidad para pruebas de la API completa';
 
-// Las oportunidades de prueba se crean con el sufijo " (laboral)" o
-// " (académica)", así que se buscan por el inicio del título.
+// Las oportunidades de prueba se buscan por el inicio del título.
 const REGEX_PRUEBA = new RegExp(`^${TITULO_PRUEBA}`);
 
 let tokenAdmin;

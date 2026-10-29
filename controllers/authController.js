@@ -8,8 +8,7 @@ const generarToken = (id) => {
   });
 };
 
-// Arma el objeto de usuario que devuelve la API. Es el mismo que espera la
-// app, así que no hay que transformar nada del lado del celular.
+// Datos del usuario que devuelve la API.
 const datosUsuario = (usuario) => ({
   id: usuario._id,
   nombre: usuario.nombre,
@@ -44,7 +43,7 @@ const registrar = async (req, res, next) => {
       tipoPerfil
     });
 
-    // Aviso de bienvenida, igual que antes se guardaba en el celular.
+    // Notificación de bienvenida.
     await Notificacion.create({
       usuario: usuario._id,
       titulo: 'Bienvenido a Bolívar Aprende y Trabaja',
@@ -115,8 +114,6 @@ const actualizarPerfil = async (req, res, next) => {
 };
 
 // GET /api/auth/usuarios (solo administrador)
-// Lista de usuarios: la usa el panel del administrador para saber cuántos
-// hay y para enviarle una alerta a uno en particular.
 const listarUsuarios = async (req, res, next) => {
   try {
     const usuarios = await Usuario.find({}).sort({ createdAt: -1 });

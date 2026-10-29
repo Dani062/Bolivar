@@ -3,17 +3,14 @@ const Favorito = require('../models/Favorito');
 const Postulacion = require('../models/Postulacion');
 const Inscripcion = require('../models/Inscripcion');
 
-// Convierte pagina/limite del query en números seguros (evita saltos negativos
-// o límites gigantes que harían fallar la consulta).
+// Convierte pagina y limite en números válidos.
 const paginacion = (pagina, limite, limitePorDefecto) => {
   const p = Math.max(parseInt(pagina, 10) || 1, 1);
   const l = Math.min(Math.max(parseInt(limite, 10) || limitePorDefecto, 1), 100);
   return { p, l, salto: (p - 1) * l };
 };
 
-// Campos que el cliente NO puede escribir: los controla el servidor.
-// Sin esta lista un POST podría elegir el _id y un PUT podría cambiar el
-// autor de la publicación o las fechas de auditoría.
+// Campos que el cliente no puede enviar: los controla el servidor.
 const CAMPOS_PROTEGIDOS = ['_id', 'id', 'creadoPor', 'createdAt', 'updatedAt', '__v'];
 
 // Deja en el cuerpo solo los campos que el cliente sí puede enviar.
@@ -25,8 +22,7 @@ const soloCamposPermitidos = (cuerpo) => {
   return limpio;
 };
 
-// GET /api/oportunidades?municipio=&categoria=&tipo=&pagina=&limite=
-// Listado público: solo las oportunidades activas.
+// GET /api/oportunidades (público, solo las activas)
 const listarOportunidades = async (req, res, next) => {
   try {
     const { municipio, categoria, tipo, clase, pagina, limite } = req.query;
@@ -34,8 +30,7 @@ const listarOportunidades = async (req, res, next) => {
 
     const filtro = { estado: 'activa' };
 
-    // Si el usuario filtra por un municipio específico, también mostramos
-    // las oportunidades marcadas como "Todo Bolívar"
+    // Un municipio incluye también las oportunidades de "Todo Bolívar".
     if (municipio && municipio !== 'Todo Bolívar') {
       filtro.municipio = { $in: [municipio, 'Todo Bolívar'] };
     } else if (municipio === 'Todo Bolívar') {
@@ -65,9 +60,7 @@ const listarOportunidades = async (req, res, next) => {
   }
 };
 
-// GET /api/oportunidades/todas  (solo administrador)
-// Listado completo: incluye las oportunidades cerradas y pendientes, que de
-// otro modo el administrador no podría volver a editar desde la app.
+// GET /api/oportunidades/todas (solo administrador, incluye cerradas)
 const listarTodasOportunidades = async (req, res, next) => {
   try {
     const { municipio, categoria, tipo, clase, pagina, limite } = req.query;
@@ -151,7 +144,7 @@ const eliminarOportunidad = async (req, res, next) => {
     if (!oportunidad) {
       return res.status(404).json({ mensaje: 'Oportunidad no encontrada.' });
     }
-    // Se borra lo que dependía de ella para no dejar registros huérfanos.
+    // Se borran también sus favoritos, postulaciones e inscripciones.
     await Promise.all([
       Favorito.deleteMany({ oportunidad: oportunidad._id }),
       Postulacion.deleteMany({ oportunidad: oportunidad._id }),

@@ -5,8 +5,7 @@ const Oportunidad = require('../models/Oportunidad');
 const listarFavoritos = async (req, res, next) => {
   try {
     const favoritos = await Favorito.find({ usuario: req.usuario._id }).populate('oportunidad');
-    // Si la oportunidad se borró, el favorito se descarta: en la respuesta
-    // nunca debe venir una oportunidad vacía.
+    // Se descartan los favoritos de oportunidades borradas.
     res.json({ favoritos: favoritos.filter((f) => f.oportunidad) });
   } catch (error) {
     next(error);

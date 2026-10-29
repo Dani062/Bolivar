@@ -1,9 +1,6 @@
 // Listas fijas del dominio de la app.
 
-// Los 44 municipios y 2 distritos del departamento de Bolívar, igual que la
-// lista que usa la app (lib/datos/municipios.dart). Al final se dejan los
-// nombres cortos que usaron las primeras versiones, para que los documentos
-// que ya están en Atlas (el administrador, por ejemplo) sigan siendo válidos.
+// Los 44 municipios y 2 distritos de Bolívar (la misma lista de la app).
 const MUNICIPIOS = [
   'Todo Bolívar',
   'Achí',

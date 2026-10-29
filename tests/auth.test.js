@@ -1,10 +1,4 @@
-/**
- * Prueba de ejemplo para el flujo de registro/login.
- * Requiere una base de datos de pruebas corriendo (usa MONGO_URI en .env
- * apuntando a una base distinta a la de producción, ej: bolivar_test).
- *
- * Correr con: npm test
- */
+// Pruebas de registro e inicio de sesión. Correr con: npm test
 require('dotenv').config();
 const mongoose = require('mongoose');
 const request = require('supertest');

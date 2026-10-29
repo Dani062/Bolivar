@@ -1,299 +1,72 @@
 # Backend - Bolívar Aprende y Trabaja
 
-> **Documentación completa paso a paso:** ver [`DOCUMENTACION.md`](DOCUMENTACION.md) (archivos, endpoints, esquema de MongoDB, cómo correrlo y demo del API encendida/apagada).
+API REST en Node.js + Express + MongoDB para la app Bolívar Aprende y Trabaja.
 
-API REST para la app que centraliza oportunidades de educación, trabajo y emprendimiento en el departamento de Bolívar.
+## Cómo encenderla
 
-## Tecnologías
-
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT para autenticación
-- bcryptjs para el hash de contraseñas
-- express-validator para validaciones
-- helmet, cors y express-rate-limit para seguridad básica
-
-## Cómo mostrar las pruebas con Postman
-
-La carpeta `postman` trae la colección con las 39 peticiones del CRUD, cada
-una con sus propias pruebas automáticas (`pm.test`). Es la forma más
-rápida de **demostrarle al profesor que la API funciona**.
-
-### Abrirla (5 pasos)
-
-1. Abre **Postman** (lo tienes instalado: hay un acceso directo en el
-   escritorio).
-2. Arriba a la izquierda, click en **Import** (o el ícono de una flecha
-   ↑).
-3. **Drag & drop** (o "Add Files") el archivo:
-   `postman\Bolivar-Aprende-y-Trabaja.postman_collection.json`
-4. Repite lo anterior con el entorno:
-   `postman\Bolivar-Entorno-Local.postman_environment.json`
-   (también hay uno llamado `Bolivar-Entorno-Publico` para cuando el
-   backend esté desplegado en internet).
-5. En la esquina superior derecha, el **selector de entorno**: elige
-   *"Bolivar Aprende y Trabaja - Local"*. Si no sale, hay que activarlo
-   desde el ícono del ojo (👁) de la barra lateral.
-
-### Correrla entera (para la demostración)
-
-1. Que el backend esté encendido (`npm start`) y que la variable `baseUrl`
-   apunte a `http://localhost:4000/api`.
-2. En la colección, click en el botón **▶ Run** (arriba a la derecha).
-3. Postman ejecuta las 39 peticiones en orden y al final te muestra el
-   resumen: cuántos tests pasaron, cuáles fallaron y cuánto tardó cada uno.
-4. En la parte de abajo puedes abrir la pestaña **Console** para ver el
-   detalle de cada petición.
-
-> Importante: la primera petición debe ser **`2.1 POST /auth/login`**
-> (con el administrador), porque ahí se guarda el token en la variable
-> `tokenAdmin` que usan las peticiones protegidas. Al correr la colección
-> completa, Postman respeta ese orden.
-
-### Si el profesor quiere verlas una por una
-
-Cada petición tiene su script de prueba. Click en la pestaña **Scripts** de
-la petición elegida y ahí está el código; se puede modificar y volver a
-correr. Por ejemplo, en `4.1 POST /oportunidades` está la prueba de que el
-servidor **no acepta que el cliente elija el `_id`** de la oportunidad.
-
-### Cambiar el servidor
-
-No hay que editar cada petición: la variable `baseUrl` del entorno es la que
-se usa en todas. Cambiándola pasas de tu PC al servidor publicado sin
-tocar nada más.
-
-## Publicar el backend en internet (para que el APK funcione en cualquier red)
-
-Si entregás el APK, el profesor lo instala en su celular: **para que le
-funcione, el backend tiene que estar en internet**, no en tu PC. La base de
-datos ya está en internet (MongoDB Atlas), solo falta publicar el servidor.
-
-### Con Render (gratis, ~5 minutos)
-
-El repositorio ya está en GitHub (`https://github.com/Dani062/Bolivar`) y el
-proyecto tiene el archivo `render.yaml` que configura todo solo.
-
-1. Entra a **https://render.com** y crea una cuenta (con GitHub es un clic).
-2. **New → Blueprint** y apunta al repositorio `Dani062/Bolivar`.
-3. Render lee `render.yaml` y crea el servicio. Te va a pedir el valor de
-   `MONGO_URI`: pega el de tu archivo `.env` (es la URL de tu cluster de
-   Atlas). Lo demás lo genera Render solo.
-4. Cuando termine de desplegar te da una dirección tipo
-   `https://bolivar-aprende-y-trabaja-api.onrender.com`.
-
-Comprobación: abre `https://bolivar-aprende-y-trabaja-api.onrender.com/api/salud`
-en el navegador. Debe salir `{"estado":"ok"}`.
-
-### Compilar la app apuntando a esa dirección
-
-```powershell
-flutter build apk --release --dart-define=API_URL=https://bolivar-aprende-y-trabaja-api.onrender.com/api
-```
-
-> **Ojo con el plan gratis de Render:** el servicio se duerme si nadie lo usa
-> durante 15 minutos, y al despertarse tarda medio minuto. Por eso la app
-> espera hasta 45 segundos en el primer intento (el login). Si vas a hacer la
-> demostración en vivo, entra un momento antes a la dirección de la API para
-> despertarlo.
->
-> Si prefieres que nunca se duerma, en Render puedes subir el plan a
-> "Starter" (7 USD/mes), o usar otro servicio como Railway, Fly.io o Koyeb.
-
-### Si el despliegue pide "MongoDB Atlas"
-
-El `MONGO_URI` que hay que pegar es el que está en tu archivo `.env`:
-
-```
-MONGO_URI=mongodb+srv://Daniela:TU_CLAVE@cluster0.07z6lee.mongodb.net/bolivar_aprende_y_trabaja?appName=Cluster0
-```
-
-Copia **la línea completa**, con `mongodb+srv://` al principio.
-
-### Igual la app deja cambiar la dirección
-
-Por si acaso, en la **pantalla de login** hay un botón abajo
-("Servidor: ..."). Ahí se puede escribir la dirección del backend y la app la
-usa desde ese momento. Sirve para apuntar a un servidor local durante las
-pruebas, sin tener que recompilar.
-
-## Instalación
-
-1. Instalar dependencias:
-   ```bash
-   npm install
-   ```
-2. Copiar el archivo de variables de entorno y completarlo:
-   ```bash
-   cp .env.example .env
-   ```
-3. Asegurarte de tener MongoDB corriendo (local o en Atlas) y poner la URL en `MONGO_URI`.
-4. Levantar el servidor en modo desarrollo:
-   ```bash
-   npm run dev
-   ```
-5. Probar que está vivo entrando a: `http://localhost:4000/api/salud`
-
-## Estructura del proyecto
-
-```
-bolivar-backend/
-├── config/          # Conexión a la base de datos
-├── controllers/      # Lógica de cada módulo (auth, oportunidades, favoritos)
-├── middleware/        # Autenticación, roles y manejo de errores
-├── models/            # Esquemas de Mongoose (Usuario, Oportunidad, Favorito)
-├── routes/            # Definición de endpoints
-├── utils/              # Constantes del dominio y validadores
-├── tests/              # Pruebas con Jest + Supertest
-└── server.js           # Punto de entrada
-```
-
-## Endpoints principales
-
-### Autenticación (`/api/auth`)
-| Método | Ruta | Protegido | Descripción |
-|--------|------|-----------|-------------|
-| POST | /registro | No | Crear cuenta nueva (devuelve token) |
-| POST | /login | No | Iniciar sesión, devuelve token JWT |
-| GET | /perfil | Sí | Ver datos del usuario logueado |
-| PUT | /perfil | Sí | Editar nombre/apellido/municipio/tipoPerfil/teléfono |
-| GET | /usuarios | Sí (admin) | Listar los usuarios registrados |
-
-Ejemplo body de registro:
-```json
-{
-  "nombre": "Ana",
-  "apellido": "Pérez",
-  "email": "ana@example.com",
-  "password": "123456",
-  "municipio": "Cartagena de Indias",
-  "identificacion": "10999999",
-  "telefono": "3001234567",
-  "tipoPerfil": "Estudiante"
-}
-```
-
-### Oportunidades (`/api/oportunidades`)
-| Método | Ruta | Protegido | Descripción |
-|--------|------|-----------|-------------|
-| GET | / | No | Listar con filtros `?municipio=&categoria=&tipo=&clase=&pagina=&limite=` (solo las activas) |
-| GET | /todas | Sí (admin) | Listado completo: incluye las cerradas y pendientes |
-| GET | /:id | No | Ver el detalle de una oportunidad |
-| POST | / | Sí (admin) | Crear oportunidad |
-| PUT | /:id | Sí (admin) | Editar oportunidad |
-| DELETE | /:id | Sí (admin) | Eliminar oportunidad |
-
-> `/todas` va declarada antes de `/:id` porque Express compara las rutas en
-> el orden en que se escriben.
-
-Ejemplo body para crear una oportunidad:
-```json
-{
-  "titulo": "Curso gratuito de Excel básico",
-  "descripcion": "Curso virtual de 20 horas dirigido a jóvenes de El Carmen de Bolívar.",
-  "categoria": "Educación",
-  "tipo": "Cursos",
-  "municipio": "El Carmen de Bolívar",
-  "entidadOrganizadora": "SENA",
-  "fechaCierre": "2026-12-01",
-  "enlaceExterno": "https://ejemplo.com/curso-excel"
-}
-```
-
-### Favoritos (`/api/favoritos`) — todas protegidas
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | / | Ver mis favoritos |
-| POST | /:oportunidadId | Guardar una oportunidad |
-| DELETE | /:oportunidadId | Quitar una oportunidad de favoritos |
-
-### Postulaciones (`/api/postulaciones`)
-| Método | Ruta | Protegido | Descripción |
-|--------|------|-----------|-------------|
-| POST | / | Sí | El estudiante se postula a una oferta laboral |
-| GET | /mias | Sí | Mis postulaciones |
-| GET | / | Sí (admin) | Todas, con los datos del estudiante |
-| PUT | /:id/estado | Sí (admin) | Cambiar el estado (Enviada / En revisión / Aceptada / Rechazada) |
-| DELETE | /:id | Sí | Borrar (el dueño o el administrador) |
-
-### Inscripciones (`/api/inscripciones`)
-| Método | Ruta | Protegido | Descripción |
-|--------|------|-----------|-------------|
-| POST | / | Sí | El estudiante se inscribe a un curso, beca o taller |
-| GET | /mias | Sí | Mis inscripciones |
-| DELETE | /oportunidad/:oportunidadId | Sí | Anular la inscripción a esa oportunidad |
-
-### Notificaciones (`/api/notificaciones`)
-| Método | Ruta | Protegido | Descripción |
-|--------|------|-----------|-------------|
-| GET | / | Sí | Mis notificaciones |
-| GET | /recientes | Sí (admin) | Historial de las alertas enviadas |
-| PUT | /leer-todas | Sí | Marcar todas como leídas |
-| PUT | /:id/leida | Sí | Marcar una como leída |
-| DELETE | /:id | Sí | Borrar una notificación |
-| POST | / | Sí (admin) | Enviar una alerta a todos o a un usuario |
-
-## Autenticación
-
-Todas las rutas protegidas requieren el header:
-```
-Authorization: Bearer <token>
-```
-El token se obtiene al hacer login o registro.
-
-## Roles
-
-- `usuario`: puede ver oportunidades, guardar favoritos y editar su perfil.
-- `administrador`: además puede crear, editar y eliminar oportunidades.
-
-El administrador por defecto se crea con:
+Requisitos: Node.js 18 o superior y conexión a internet (la base de datos está en MongoDB Atlas).
 
 ```bash
-npm run seed      # admin@bolivar.com / admin123 (los mismos de .env)
-npm run semilla   # carga oportunidades de ejemplo (no duplica las que ya están)
-npm run limpiar   # borra los datos que dejan las pruebas automáticas
-npm run ver       # muestra qué hay guardado en Atlas
-npm run demo-apagada  # apaga y enciende la API comprobando que nada se guarda sin ella
+npm install
+npm start
 ```
 
-## Cómo consume la API la app (Flutter)
+Cuando aparece `Servidor corriendo en http://localhost:4000`, la API está lista.
+Para comprobarlo, abre http://localhost:4000/api/salud en el navegador: debe responder `{"estado":"ok"}`.
 
-**La app no tiene base de datos propia: todo se guarda en MongoDB.** La
-sesión es un token JWT que la app guarda en el dispositivo y manda en cada
-petición.
+Al encender se crea solo el administrador (si no existe):
 
-| Archivo de la app | Qué hace |
+- Correo: `admin@bolivar.com`
+- Contraseña: `admin123`
+
+La configuración está en el archivo `.env` (ver `.env.example`).
+
+## CRUD de oportunidades
+
+| Método | Ruta | Permiso | Qué hace |
+|---|---|---|---|
+| GET | `/api/oportunidades` | Público | Lista las activas (filtros: municipio, categoria, tipo, clase, pagina, limite) |
+| GET | `/api/oportunidades/todas` | Administrador | Lista todas, incluidas cerradas y pendientes |
+| GET | `/api/oportunidades/:id` | Público | Devuelve una oportunidad |
+| POST | `/api/oportunidades` | Administrador | Crea una oportunidad |
+| PUT | `/api/oportunidades/:id` | Administrador | Actualiza solo los campos enviados |
+| DELETE | `/api/oportunidades/:id` | Administrador | Borra la oportunidad y lo que depende de ella |
+
+Las rutas protegidas piden la cabecera `Authorization: Bearer <token>`, que devuelve `POST /api/auth/login`.
+
+## Otros módulos
+
+| Ruta base | Para qué sirve |
 |---|---|
-| `lib/datos/api_config.dart` | Dirección del servidor (se cambia al compilar con `--dart-define=API_URL=...`), puerto y tiempo de espera |
-| `lib/datos/api_cliente.dart` | Cliente HTTP de todo: sesión, oportunidades, favoritos, postulaciones, inscripciones y notificaciones |
-| `lib/datos/modelos.dart` | Traduce el JSON de la API a los modelos de la app |
-| `lib/datos/*_repositorio.dart` | La capa que usa cada pantalla |
-| `lib/pantallas/gestion_datos.dart` | Chip de estado ("API conectada" / "API apagada — no se pueden guardar cambios"), CRUD de oportunidades y envío de alertas |
-| `lib/pantallas/home.dart` | Pantalla principal: el listado sale de la API |
+| `/api/auth` | Registro, login, perfil y listado de usuarios |
+| `/api/postulaciones` | Postulaciones a ofertas laborales |
+| `/api/inscripciones` | Inscripciones a cursos y becas |
+| `/api/notificaciones` | Avisos y alertas del administrador |
+| `/api/favoritos` | Oportunidades favoritas |
 
-Si el servidor está apagado, la app **no guarda ningún cambio** y el listado
-muestra la última copia descargada.
+## Estructura
 
-Para comprobar que la app funciona contra este backend:
-
-```bash
-cd "C:\Users\Daniela Paez\AndroidStudioProjects\bolivar_aprende_y_trabaja"
-flutter test --dart-define=API_URL=http://localhost:4000/api
 ```
-
-Detalle completo en [`DOCUMENTACION.md`](DOCUMENTACION.md) (sección 9.1).
+server.js        punto de entrada
+config/          conexión a MongoDB
+models/          esquemas de Mongoose
+routes/          rutas y permisos
+controllers/     lógica de cada ruta
+middleware/      token JWT, roles y errores
+utils/           validaciones y listas fijas
+scripts/         semilla.js: carga oportunidades de ejemplo (npm run semilla)
+tests/           pruebas con Jest
+postman/         colección de Postman y su entorno
+```
 
 ## Pruebas
 
+Con la API encendida:
+
 ```bash
-npm test
+npm test                 # pruebas con Jest
+npm run test:postman     # las 39 peticiones de Postman en la terminal
+npm run reporte:postman  # lo mismo y genera postman/Reporte-pruebas-Postman.html
 ```
 
-31 pruebas con Jest + Supertest: registro, login, perfil, permisos por rol, el
-CRUD completo de oportunidades (incluye que el cliente no pueda elegir el
-`_id`), postulaciones, inscripciones y notificaciones.
-
-## Próximos pasos sugeridos
-
-- Revisar con Keila que los nombres de campos coincidan con el modelo de datos y el diagrama entidad-relación.
-- Agregar pruebas de favoritos junto con Yeison para el plan de pruebas.
+En Postman: Import de `postman/Bolivar-Aprende-y-Trabaja.postman_collection.json` y de `postman/Bolivar-Entorno-Local.postman_environment.json`, elegir el entorno arriba a la derecha y darle a **Run collection**.

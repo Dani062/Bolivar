@@ -5,7 +5,7 @@ const oportunidadSchema = new mongoose.Schema(
   {
     titulo: { type: String, required: true, trim: true },
     descripcion: { type: String, required: true },
-    // Clase de oportunidad según el formulario de la app (Keila)
+    // Académica o laboral
     clase: { type: String, enum: ['academica', 'laboral'], default: 'academica' },
     categoria: { type: String, enum: CATEGORIAS, default: 'Educación' },
     tipo: { type: String, enum: TODOS_LOS_TIPOS, default: 'Cursos' },
@@ -34,7 +34,7 @@ const oportunidadSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Índices para que los filtros de búsqueda (municipio + categoria + tipo) sean rápidos
+// Índice para que los filtros de búsqueda sean rápidos
 oportunidadSchema.index({ municipio: 1, categoria: 1, tipo: 1 });
 
 module.exports = mongoose.model('Oportunidad', oportunidadSchema);

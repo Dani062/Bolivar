@@ -87,9 +87,7 @@ const eliminar = async (req, res, next) => {
   }
 };
 
-// DELETE /api/inscripciones/oportunidad/:oportunidadId
-// Anula la inscripción del usuario a esa oportunidad (es lo que hace el
-// botón "Anular" de la app).
+// DELETE /api/inscripciones/oportunidad/:oportunidadId (botón "Anular" de la app)
 const anularPorOportunidad = async (req, res, next) => {
   try {
     const inscripcion = await Inscripcion.findOne({

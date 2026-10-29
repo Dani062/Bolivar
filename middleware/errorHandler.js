@@ -1,4 +1,4 @@
-// Middleware centralizado: cualquier error que llegue con next(error) termina aquí
+// Manejo central de errores (todo lo que llega con next(error))
 const manejadorDeErrores = (err, req, res, next) => {
   console.error(err.stack);
 

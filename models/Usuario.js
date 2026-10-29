@@ -29,7 +29,7 @@ const usuarioSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Los municipios válidos para el usuario no incluyen "Todo Bolívar" (eso aplica solo a oportunidades)
+// Municipios válidos para el usuario (sin "Todo Bolívar")
 function MUNICIOS_VALIDOS() {
   return MUNICIPIOS.filter((m) => m !== 'Todo Bolívar');
 }

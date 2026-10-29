@@ -20,11 +20,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Límite de intentos para evitar fuerza bruta en login/registro.
-//
-// Solo se cuentan los intentos que FALLAN: los que sí funcionan no suman al
-// contador, así que un usuario (o la colección de Postman, que hace varios
-// logins) no se queda bloqueado. El límite se cambia con RATE_LIMIT_MAX.
+// Límite de intentos fallidos de login/registro (los exitosos no cuentan).
 const limitadorAuth = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: Number(process.env.RATE_LIMIT_MAX) || 100,
@@ -42,11 +38,10 @@ app.use('/api/postulaciones', postulacionRoutes);
 app.use('/api/inscripciones', inscripcionRoutes);
 app.use('/api/notificaciones', notificacionRoutes);
 
-// Ruta de salud, útil para probar que el servidor está vivo
+// Ruta de salud: comprueba que el servidor está encendido
 app.get('/api/salud', (req, res) => res.json({ estado: 'ok' }));
 
-// Raíz: sirve de saludo cuando se abre la dirección del servidor en el
-// navegador (por ejemplo al revisar el despliegue).
+// Raíz: saludo al abrir la dirección del servidor en el navegador.
 app.get('/', (req, res) => {
   res.json({
     proyecto: 'Bolívar Aprende y Trabaja - API',
@@ -68,19 +63,39 @@ app.use(manejadorDeErrores);
 
 const PORT = process.env.PORT || 4000;
 
+// Crea el administrador al encender el servidor si todavía no existe.
+const asegurarAdministrador = async () => {
+  const Usuario = require('./models/Usuario');
+  const correo = (process.env.ADMIN_EMAIL || 'admin@bolivar.com').toLowerCase();
+  try {
+    if (!(await Usuario.exists({ email: correo }))) {
+      await Usuario.create({
+        nombre: 'Admin',
+        apellido: 'Bolívar',
+        email: correo,
+        password: process.env.ADMIN_PASSWORD || 'admin123',
+        municipio: 'Cartagena de Indias',
+        rol: 'administrador'
+      });
+      console.log(`👤 Administrador creado: ${correo}`);
+    }
+  } catch (error) {
+    console.error('No se pudo crear el administrador:', error.message);
+  }
+};
 
-// Solo se enciende el servidor cuando el archivo se ejecuta directamente
-// ("node server.js"). Si se importa desde una prueba (require('../server'))
-// se devuelve la app sin abrir el puerto, para que las pruebas puedan correr
-// con el servidor ya levantado.
+
+// Solo se abre el puerto con "node server.js"; las pruebas importan la app sin encenderla.
 if (require.main === module) {
   if (!process.env.JWT_SECRET) {
     console.error('❌ Falta JWT_SECRET en el archivo .env (copia .env.example como .env).');
     process.exit(1);
   }
-  conectarDB().then(() => {
-    app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
-  });
+  conectarDB()
+    .then(asegurarAdministrador)
+    .then(() => {
+      app.listen(PORT, () => console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`));
+    });
 }
 
 module.exports = app;

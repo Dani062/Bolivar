@@ -6,12 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "node scripts/crearAdmin.js",
     "semilla": "node scripts/semilla.js",
-    "limpiar": "node scripts/limpiarPruebas.js",
-    "demo-apagada": "node scripts/demoSinApi.js",
-    "url": "node scripts/urlDelServidor.js",
-    "ver": "node scripts/verContenido.js",
     "test": "jest --detectOpenHandles --runInBand",
     "test:postman": "newman run postman/Bolivar-Aprende-y-Trabaja.postman_collection.json -e postman/Bolivar-Entorno-Local.postman_environment.json",
     "reporte:postman": "newman run postman/Bolivar-Aprende-y-Trabaja.postman_collection.json -e postman/Bolivar-Entorno-Local.postman_environment.json -r cli,html --reporter-html-export postman/Reporte-pruebas-Postman.html"

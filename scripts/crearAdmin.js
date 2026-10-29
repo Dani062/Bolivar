@@ -1,5 +1,5 @@
-// Crea (o corrige) el administrador de la app Android en MongoDB.
-// Uso: npm run seed
+// Crea el administrador en MongoDB (o le devuelve el rol si ya existe).
+// Uso: node scripts/crearAdmin.js
 require('dotenv').config();
 const conectarDB = require('../config/db');
 const Usuario = require('../models/Usuario');
@@ -15,7 +15,7 @@ const empezar = async () => {
   if (existe) {
     existe.rol = 'administrador';
     existe.activo = true;
-    // No se toca el password: así no se vuelve a hashear.
+    // No se toca la contraseña para no cifrarla dos veces.
     await existe.save();
     console.log(`Ya existía "${CORREO}": rol actualizado a administrador.`);
   } else {

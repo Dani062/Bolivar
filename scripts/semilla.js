@@ -1,8 +1,5 @@
-// Carga un conjunto de oportunidades de ejemplo en MongoDB.
+// Carga oportunidades de ejemplo en MongoDB (no repite las que ya existen).
 // Uso: npm run semilla
-//
-// El script es idempotente: si ya existe una oportunidad con el mismo título
-// no la vuelve a crear, así que se puede ejecutar las veces que haga falta.
 require('dotenv').config();
 const conectarDB = require('../config/db');
 const Usuario = require('../models/Usuario');
@@ -112,7 +109,7 @@ const empezar = async () => {
   const admin = await Usuario.findOne({ email: CORREO });
   if (!admin) {
     console.error(
-      `No existe el usuario "${CORREO}". Ejecuta primero "npm run seed" para crear el administrador.`
+      `No existe el usuario "${CORREO}". Enciende primero el servidor con "npm start": así se crea el administrador.`
     );
     process.exit(1);
   }

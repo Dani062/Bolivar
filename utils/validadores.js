@@ -1,7 +1,7 @@
 const { body, validationResult } = require('express-validator');
 const { MUNICIPIOS, CATEGORIAS, TODOS_LOS_TIPOS } = require('./constantes');
 
-// Revisa el resultado de las validaciones anteriores y corta la petición si hay errores
+// Corta la petición si alguna validación falló
 const validar = (req, res, next) => {
   const errores = validationResult(req);
   if (!errores.isEmpty()) {
@@ -38,9 +38,7 @@ const reglasOportunidad = [
   validar
 ];
 
-// Al actualizar solo se valida lo que viene en el cuerpo: así se puede
-// cambiar un solo campo (por ejemplo el título) sin enviar la oportunidad
-// completa. Los campos que no se envían se quedan como estaban.
+// Al actualizar solo se valida lo que llega; lo demás no cambia.
 const reglasActualizacionOportunidad = [
   body('titulo').optional({ values: 'undefined' }).trim().notEmpty().withMessage('El título es obligatorio.'),
   body('descripcion').optional({ values: 'undefined' }).trim().notEmpty().withMessage('La descripción es obligatoria.'),
