@@ -6,7 +6,10 @@ const {
   obtenerOportunidad,
   crearOportunidad,
   actualizarOportunidad,
-  eliminarOportunidad
+  eliminarOportunidad,
+  subirImagen,
+  quitarImagen,
+  verImagen
 } = require('../controllers/oportunidadController');
 const { protegerRuta, permitirRoles } = require('../middleware/auth');
 const { reglasOportunidad, reglasActualizacionOportunidad } = require('../utils/validadores');
@@ -18,6 +21,11 @@ router.get('/', listarOportunidades);
 router.get('/todas', protegerRuta, permitirRoles('administrador'), listarTodasOportunidades);
 
 router.get('/:id', obtenerOportunidad);
+
+// Foto de la oferta: cualquiera la ve, solo el administrador la cambia.
+router.get('/:id/imagen', verImagen);
+router.put('/:id/imagen', protegerRuta, permitirRoles('administrador'), subirImagen);
+router.delete('/:id/imagen', protegerRuta, permitirRoles('administrador'), quitarImagen);
 
 // Rutas protegidas: solo administradores pueden crear/editar/eliminar
 router.post('/', protegerRuta, permitirRoles('administrador'), reglasOportunidad, crearOportunidad);

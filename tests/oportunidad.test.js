@@ -155,6 +155,44 @@ describe('CRUD de oportunidades', () => {
     expect(inexistente.statusCode).toBe(404);
   });
 
+  test('la foto se sube, la ve cualquiera y se puede quitar', async () => {
+    // Un JPG mínimo (solo el encabezado) basta para la prueba.
+    const jpg = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46]).toString('base64');
+
+    const sinPermiso = await request(app)
+      .put(`/api/oportunidades/${idCreada}/imagen`)
+      .set('Authorization', `Bearer ${tokenUsuario}`)
+      .send({ imagen: jpg });
+    expect(sinPermiso.statusCode).toBe(403);
+
+    const invalida = await request(app)
+      .put(`/api/oportunidades/${idCreada}/imagen`)
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({ imagen: Buffer.from('no es imagen').toString('base64') });
+    expect(invalida.statusCode).toBe(400);
+
+    const subir = await request(app)
+      .put(`/api/oportunidades/${idCreada}/imagen`)
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({ imagen: jpg });
+    expect(subir.statusCode).toBe(200);
+    expect(subir.body.oportunidad.tieneImagen).toBe(true);
+    expect(subir.body.oportunidad.imagenDatos).toBeUndefined();
+
+    const ver = await request(app).get(`/api/oportunidades/${idCreada}/imagen`);
+    expect(ver.statusCode).toBe(200);
+    expect(ver.headers['content-type']).toMatch(/image\/jpeg/);
+
+    const quitar = await request(app)
+      .delete(`/api/oportunidades/${idCreada}/imagen`)
+      .set('Authorization', `Bearer ${tokenAdmin}`);
+    expect(quitar.statusCode).toBe(200);
+    expect(quitar.body.oportunidad.tieneImagen).toBe(false);
+
+    const yaNo = await request(app).get(`/api/oportunidades/${idCreada}/imagen`);
+    expect(yaNo.statusCode).toBe(404);
+  });
+
   test('DELETE /api/oportunidades/:id borra la oportunidad', async () => {
     const res = await request(app)
       .delete(`/api/oportunidades/${idCreada}`)

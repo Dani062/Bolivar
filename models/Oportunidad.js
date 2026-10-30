@@ -15,6 +15,11 @@ const oportunidadSchema = new mongoose.Schema(
     fechaCierre: { type: Date },
     enlaceExterno: { type: String, trim: true },
     imagenUrl: { type: String, trim: true },
+    // Foto de la oferta: se guarda aquí y no viaja en los listados (select: false).
+    imagenDatos: { type: Buffer, select: false },
+    imagenTipo: { type: String, select: false },
+    tieneImagen: { type: Boolean, default: false },
+    imagenActualizada: { type: Date },
     // Campos del formulario académico de la app
     cupos: { type: Number, min: 0 },
     // Campos del formulario laboral de la app

@@ -18,7 +18,8 @@ const app = express();
 // Seguridad y utilidades base
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+// El límite alcanza para una foto de 2 MB enviada en base64.
+app.use(express.json({ limit: '3mb' }));
 
 // Límite de intentos fallidos de login/registro (los exitosos no cuentan).
 const limitadorAuth = rateLimit({

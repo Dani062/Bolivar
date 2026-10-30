@@ -18,6 +18,11 @@ const manejadorDeErrores = (err, req, res, next) => {
     return res.status(400).json({ mensaje: 'El cuerpo de la petición no es un JSON válido.' });
   }
 
+  // Cuerpo demasiado grande (por ejemplo, una foto muy pesada)
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ mensaje: 'El archivo es demasiado grande (máximo 2 MB).' });
+  }
+
   // Error de validación de Mongoose
   if (err.name === 'ValidationError') {
     const mensajes = Object.values(err.errors).map((e) => e.message);

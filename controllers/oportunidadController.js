@@ -3,6 +3,7 @@ const Favorito = require('../models/Favorito');
 const Postulacion = require('../models/Postulacion');
 const Inscripcion = require('../models/Inscripcion');
 const { nitValido, formatearNit } = require('../utils/nit');
+const { leerImagen } = require('../utils/imagen');
 
 // Convierte pagina y limite en números válidos.
 const paginacion = (pagina, limite, limitePorDefecto) => {
@@ -12,7 +13,10 @@ const paginacion = (pagina, limite, limitePorDefecto) => {
 };
 
 // Campos que el cliente no puede enviar: los controla el servidor.
-const CAMPOS_PROTEGIDOS = ['_id', 'id', 'creadoPor', 'createdAt', 'updatedAt', '__v', 'empresaVerificada'];
+const CAMPOS_PROTEGIDOS = [
+  '_id', 'id', 'creadoPor', 'createdAt', 'updatedAt', '__v', 'empresaVerificada',
+  'imagenDatos', 'imagenTipo', 'tieneImagen', 'imagenActualizada'
+];
 
 // Si llega un NIT, lo guarda con formato estándar y marca la empresa como verificada.
 const aplicarNit = (datos) => {
@@ -166,7 +170,63 @@ const eliminarOportunidad = async (req, res, next) => {
   }
 };
 
+// PUT /api/oportunidades/:id/imagen (solo administrador). Cuerpo: { imagen: '<base64>' }
+const subirImagen = async (req, res, next) => {
+  try {
+    const { datos, tipo, error } = leerImagen(req.body?.imagen);
+    if (error) return res.status(400).json({ mensaje: error });
+
+    const oportunidad = await Oportunidad.findByIdAndUpdate(
+      req.params.id,
+      { imagenDatos: datos, imagenTipo: tipo, tieneImagen: true, imagenActualizada: new Date() },
+      { new: true }
+    );
+    if (!oportunidad) {
+      return res.status(404).json({ mensaje: 'Oportunidad no encontrada.' });
+    }
+    res.json({ mensaje: 'Foto guardada.', oportunidad });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// DELETE /api/oportunidades/:id/imagen (solo administrador)
+const quitarImagen = async (req, res, next) => {
+  try {
+    const oportunidad = await Oportunidad.findByIdAndUpdate(
+      req.params.id,
+      { $unset: { imagenDatos: 1, imagenTipo: 1, imagenActualizada: 1 }, tieneImagen: false },
+      { new: true }
+    );
+    if (!oportunidad) {
+      return res.status(404).json({ mensaje: 'Oportunidad no encontrada.' });
+    }
+    res.json({ mensaje: 'Foto eliminada.', oportunidad });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /api/oportunidades/:id/imagen (público): devuelve la foto tal cual
+const verImagen = async (req, res, next) => {
+  try {
+    const oportunidad = await Oportunidad.findById(req.params.id).select('+imagenDatos +imagenTipo');
+    if (!oportunidad || !oportunidad.imagenDatos) {
+      return res.status(404).json({ mensaje: 'Esta oportunidad no tiene foto.' });
+    }
+    res.set('Content-Type', oportunidad.imagenTipo || 'image/jpeg');
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.send(oportunidad.imagenDatos);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
+  subirImagen,
+  quitarImagen,
+  verImagen,
   listarOportunidades,
   listarTodasOportunidades,
   obtenerOportunidad,
