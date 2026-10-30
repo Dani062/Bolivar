@@ -2,6 +2,7 @@ const Oportunidad = require('../models/Oportunidad');
 const Favorito = require('../models/Favorito');
 const Postulacion = require('../models/Postulacion');
 const Inscripcion = require('../models/Inscripcion');
+const { nitValido, formatearNit } = require('../utils/nit');
 
 // Convierte pagina y limite en números válidos.
 const paginacion = (pagina, limite, limitePorDefecto) => {
@@ -11,7 +12,16 @@ const paginacion = (pagina, limite, limitePorDefecto) => {
 };
 
 // Campos que el cliente no puede enviar: los controla el servidor.
-const CAMPOS_PROTEGIDOS = ['_id', 'id', 'creadoPor', 'createdAt', 'updatedAt', '__v'];
+const CAMPOS_PROTEGIDOS = ['_id', 'id', 'creadoPor', 'createdAt', 'updatedAt', '__v', 'empresaVerificada'];
+
+// Si llega un NIT, lo guarda con formato estándar y marca la empresa como verificada.
+const aplicarNit = (datos) => {
+  if (datos.nit === undefined) return datos;
+  const valido = nitValido(datos.nit);
+  datos.nit = valido ? formatearNit(datos.nit) : '';
+  datos.empresaVerificada = valido;
+  return datos;
+};
 
 // Deja en el cuerpo solo los campos que el cliente sí puede enviar.
 const soloCamposPermitidos = (cuerpo) => {
@@ -111,7 +121,7 @@ const obtenerOportunidad = async (req, res, next) => {
 const crearOportunidad = async (req, res, next) => {
   try {
     const oportunidad = await Oportunidad.create({
-      ...soloCamposPermitidos(req.body),
+      ...aplicarNit(soloCamposPermitidos(req.body)),
       creadoPor: req.usuario._id
     });
     res.status(201).json({ mensaje: 'Oportunidad creada.', oportunidad });
@@ -125,7 +135,7 @@ const actualizarOportunidad = async (req, res, next) => {
   try {
     const oportunidad = await Oportunidad.findByIdAndUpdate(
       req.params.id,
-      soloCamposPermitidos(req.body),
+      aplicarNit(soloCamposPermitidos(req.body)),
       { new: true, runValidators: true }
     );
     if (!oportunidad) {

@@ -34,6 +34,8 @@ La configuración está en el archivo `.env` (ver `.env.example`).
 
 Las rutas protegidas piden la cabecera `Authorization: Bearer <token>`, que devuelve `POST /api/auth/login`.
 
+Las ofertas laborales (`clase: "laboral"`) exigen el campo `nit` de la empresa. La API revisa el dígito de verificación de la DIAN y, si es válido, guarda `empresaVerificada: true`.
+
 ## Otros módulos
 
 | Ruta base | Para qué sirve |
@@ -53,7 +55,7 @@ models/          esquemas de Mongoose
 routes/          rutas y permisos
 controllers/     lógica de cada ruta
 middleware/      token JWT, roles y errores
-utils/           validaciones y listas fijas
+utils/           validaciones, NIT y listas fijas
 scripts/         semilla.js: carga oportunidades de ejemplo (npm run semilla)
 tests/           pruebas con Jest
 postman/         colección de Postman y su entorno

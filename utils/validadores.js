@@ -1,5 +1,6 @@
 const { body, validationResult } = require('express-validator');
 const { MUNICIPIOS, CATEGORIAS, TODOS_LOS_TIPOS } = require('./constantes');
+const { nitValido } = require('./nit');
 
 // Corta la petición si alguna validación falló
 const validar = (req, res, next) => {
@@ -9,6 +10,21 @@ const validar = (req, res, next) => {
   }
   next();
 };
+
+// El NIT es obligatorio en las ofertas laborales y, si llega, debe ser válido.
+const reglaNit = body('nit').custom((valor, { req }) => {
+  const vacio = valor === undefined || valor === null || String(valor).trim() === '';
+  if (vacio) {
+    if (req.body.clase === 'laboral') {
+      throw new Error('El NIT de la empresa es obligatorio en las ofertas laborales.');
+    }
+    return true;
+  }
+  if (!nitValido(valor)) {
+    throw new Error('El NIT no es válido: revisa el número y el dígito de verificación.');
+  }
+  return true;
+});
 
 const reglasRegistro = [
   body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio.'),
@@ -35,6 +51,7 @@ const reglasOportunidad = [
   body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válido.'),
   body('municipio').optional().isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
   body('cupos').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Cupos debe ser un número.'),
+  reglaNit,
   validar
 ];
 
@@ -47,6 +64,7 @@ const reglasActualizacionOportunidad = [
   body('tipo').optional().isIn(TODOS_LOS_TIPOS).withMessage('Tipo no válido.'),
   body('municipio').optional().isIn(MUNICIPIOS).withMessage('Municipio no válido.'),
   body('cupos').optional({ values: 'falsy' }).isInt({ min: 0 }).withMessage('Cupos debe ser un número.'),
+  reglaNit,
   validar
 ];
 

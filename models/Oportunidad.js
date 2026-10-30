@@ -19,6 +19,9 @@ const oportunidadSchema = new mongoose.Schema(
     cupos: { type: Number, min: 0 },
     // Campos del formulario laboral de la app
     empresa: { type: String, trim: true },
+    // NIT de la empresa y si pasó la validación del dígito de verificación
+    nit: { type: String, trim: true },
+    empresaVerificada: { type: Boolean, default: false },
     cargo: { type: String, trim: true },
     salario: { type: String, trim: true },
     ubicacion: { type: String, trim: true },
