@@ -255,6 +255,19 @@ describe('Inscripciones', () => {
     expect(mias.body.inscripciones.length).toBeGreaterThan(0);
     expect(mias.body.inscripciones[0].oportunidad.titulo).toContain('académica');
 
+    // El administrador ve la inscripción con los datos del estudiante.
+    const todas = await request(app)
+      .get('/api/inscripciones')
+      .set('Authorization', `Bearer ${tokenAdmin}`);
+    expect(todas.statusCode).toBe(200);
+    expect(todas.body.inscripciones.some((i) => i.usuario.email === correoUsuario)).toBe(true);
+
+    // Un usuario normal no puede ver las de todos.
+    const sinPermiso = await request(app)
+      .get('/api/inscripciones')
+      .set('Authorization', `Bearer ${tokenUsuario}`);
+    expect(sinPermiso.statusCode).toBe(403);
+
     const anular = await request(app)
       .delete(`/api/inscripciones/oportunidad/${idOportunidadAcademica}`)
       .set('Authorization', `Bearer ${tokenUsuario}`);

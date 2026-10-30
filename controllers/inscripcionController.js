@@ -67,6 +67,20 @@ const mias = async (req, res, next) => {
   }
 };
 
+// GET /api/inscripciones (solo administrador): quién se inscribió en qué
+const todas = async (req, res, next) => {
+  try {
+    const inscripciones = await Inscripcion.find({})
+      .populate('usuario', 'nombre apellido email municipio')
+      .populate('oportunidad')
+      .sort({ createdAt: -1 });
+
+    res.json({ inscripciones: inscripciones.filter((x) => x.oportunidad && x.usuario) });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // DELETE /api/inscripciones/:id  (el dueño o el administrador)
 const eliminar = async (req, res, next) => {
   try {
@@ -105,4 +119,4 @@ const anularPorOportunidad = async (req, res, next) => {
   }
 };
 
-module.exports = { crear, mias, eliminar, anularPorOportunidad };
+module.exports = { crear, mias, todas, eliminar, anularPorOportunidad };
